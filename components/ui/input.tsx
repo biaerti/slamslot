@@ -38,7 +38,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           {label}
         </label>
       )}
-      <textarea ref={ref} className={`${baseClass} resize-y ${className}`} {...props} />
+      <textarea ref={ref} className={`${baseClass} resize-none ${className}`} {...props} />
       {error && <p className="mt-1 text-sm text-red-400">{error}</p>}
     </div>
   )
