@@ -8,7 +8,7 @@ import { pl } from 'date-fns/locale'
 import type { DashboardData } from '@/types'
 import { DashboardPasswordGate } from './dashboard-password-gate'
 import EmailPreviewModal from './email-preview-modal'
-import EditSlamSection from './edit-slam-section'
+import EditSlamModal from './edit-slam-section'
 
 const DashboardLists = dynamic(() => import('./dashboard-lists'), { ssr: false })
 
@@ -23,6 +23,7 @@ export default function DashboardClient({ data: initialData, organizerToken }: D
   const [message, setMessage] = useState(initialData.slam.organizer_message ?? '')
   const [messageSaving, setMessageSaving] = useState(false)
   const [showPreview, setShowPreview] = useState(false)
+  const [showEdit, setShowEdit] = useState(false)
 
   const refresh = useCallback(async () => {
     const res = await fetch(`/api/dashboard/${organizerToken}`)
@@ -115,16 +116,24 @@ export default function DashboardClient({ data: initialData, organizerToken }: D
             >
               Kopiuj link dla uczestników
             </button>
+            <button
+              onClick={() => setShowEdit(true)}
+              className="text-xs text-[#555] hover:text-[#aaa] border border-[#2a2a2a] px-3 py-1.5 transition-colors"
+            >
+              Edytuj dane slamu
+            </button>
           </div>
         </div>
       </div>
 
-      {/* Edit slam */}
-      <EditSlamSection
-        slam={data.slam}
-        organizerToken={organizerToken}
-        onSaved={(updated) => setData((d) => ({ ...d, slam: { ...d.slam, ...updated } }))}
-      />
+      {showEdit && (
+        <EditSlamModal
+          slam={data.slam}
+          organizerToken={organizerToken}
+          onSaved={(updated) => setData((d) => ({ ...d, slam: { ...d.slam, ...updated } }))}
+          onClose={() => setShowEdit(false)}
+        />
+      )}
 
       {/* Organizer message */}
       <div className="border-b border-[#2a2a2a] px-6 py-5 bg-[#0a0a0a]">
