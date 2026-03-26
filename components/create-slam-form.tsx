@@ -239,7 +239,7 @@ export default function CreateSlamForm() {
         />
         <Input
           label="Lokalizacja (opcjonalnie)"
-          placeholder="adres / link Google Maps"
+          placeholder="lokal / link Google Maps"
           value={form.location}
           onChange={(e) => setForm({ ...form, location: e.target.value })}
         />
