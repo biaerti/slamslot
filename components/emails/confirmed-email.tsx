@@ -19,6 +19,7 @@ interface ConfirmedEmailProps {
   position: number
   cancelUrl?: string
   organizerMessage?: string
+  organizerEmail?: string
 }
 
 export default function ConfirmedEmail({
@@ -28,6 +29,7 @@ export default function ConfirmedEmail({
   position,
   cancelUrl,
   organizerMessage,
+  organizerEmail,
 }: ConfirmedEmailProps) {
   const formattedDate = format(new Date(slamDate), "d MMMM yyyy, HH:mm", { locale: pl })
 
@@ -70,6 +72,14 @@ export default function ConfirmedEmail({
                 Kliknij tutaj, żeby anulować zapis
               </Link>
               {' '}— zwolnisz miejsce dla kolejnej osoby.
+            </Text>
+          )}
+          {organizerEmail && (
+            <Text style={contactText}>
+              Masz pytania? Napisz do organizatora:{' '}
+              <Link href={`mailto:${organizerEmail}`} style={cancelLink}>
+                {organizerEmail}
+              </Link>
             </Text>
           )}
           <Hr style={hr} />
@@ -136,6 +146,13 @@ const footer = {
   color: '#666',
   fontSize: '13px',
   margin: '0',
+}
+
+const contactText = {
+  color: '#888',
+  fontSize: '13px',
+  lineHeight: '20px',
+  margin: '12px 0 0',
 }
 
 const cancelText = {

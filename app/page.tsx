@@ -6,7 +6,7 @@ export default function HomePage() {
     <main className="min-h-screen flex flex-col">
       <Nav active="stworz-slam" />
 
-      <div className="flex flex-1 flex-col lg:flex-row">
+      <div className="flex flex-1 flex-col lg:flex-row overflow-hidden">
         {/* Hero left */}
         <div className="lg:w-1/2 bg-[#0a0a0a] px-8 py-16 lg:px-16 flex flex-col justify-center border-r border-[#2a2a2a]">
           <p className="font-display text-7xl lg:text-9xl text-white leading-none">
@@ -40,7 +40,7 @@ export default function HomePage() {
         </div>
 
         {/* Form right */}
-        <div className="lg:w-1/2 px-8 py-8 lg:px-16 flex flex-col justify-center bg-[#0d0d0d]">
+        <div className="lg:w-1/2 px-8 py-8 lg:px-16 flex flex-col justify-center bg-[#0d0d0d] lg:overflow-y-auto">
           <p className="font-display text-3xl text-white mb-4 tracking-wide">
             STWÓRZ SLAM
           </p>

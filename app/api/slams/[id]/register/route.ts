@@ -38,7 +38,7 @@ export async function POST(
     // Fetch slam for email context
     const { data: slam } = await supabase
       .from('slams')
-      .select('name, event_date, organizer_message')
+      .select('name, event_date, organizer_message, organizer_email')
       .eq('id', id)
       .single()
 
@@ -52,6 +52,7 @@ export async function POST(
           position: result.position,
           cancelToken: result.cancelToken,
           organizerMessage: slam.organizer_message,
+          organizerEmail: slam.organizer_email,
         })
       } else {
         sendWaitlistEmail({

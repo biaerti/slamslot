@@ -29,6 +29,7 @@ export async function sendConfirmedEmail(params: {
   position: number
   cancelToken?: string
   organizerMessage?: string | null
+  organizerEmail?: string | null
 }) {
   try {
     const html = await render(ConfirmedEmail({
@@ -38,6 +39,7 @@ export async function sendConfirmedEmail(params: {
       position: params.position,
       cancelUrl: params.cancelToken ? cancelUrl(params.cancelToken) : undefined,
       organizerMessage: params.organizerMessage ?? undefined,
+      organizerEmail: params.organizerEmail ?? undefined,
     }))
     await sendEmail(params.to, `Zapis potwierdzony — ${params.slamName}`, html)
   } catch (err) {
