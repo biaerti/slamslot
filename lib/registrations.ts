@@ -4,7 +4,7 @@ import type { Registration, Slam } from '@/types'
 
 export async function getRegistrationsForDashboard(
   organizerToken: string
-): Promise<{ slam: Slam; confirmed: Registration[]; waiting: Registration[] } | null> {
+): Promise<{ slam: Slam; confirmed: Registration[]; waiting: Registration[]; cancelled: Registration[] } | null> {
   const { data: slam, error: slamError } = await supabase
     .from('slams')
     .select('*')
