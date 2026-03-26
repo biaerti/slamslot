@@ -245,9 +245,9 @@ export default function CreateSlamForm() {
             autoComplete="email"
           />
         </div>
-        <div className="w-44">
+        <div className="w-52">
           <Input
-            label="Lokalizacja (opcjonalnie)"
+            label="Lokalizacja"
             placeholder="np. link Google Maps"
             value={form.location}
             onChange={(e) => setForm({ ...form, location: e.target.value })}
