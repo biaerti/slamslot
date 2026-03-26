@@ -8,6 +8,7 @@ export interface Slam {
   organizer_token: string
   fb_event_url: string | null
   image_url: string | null
+  organizer_email: string | null
   dashboard_password_hash: string | null
   organizer_message: string | null
   created_at: string
