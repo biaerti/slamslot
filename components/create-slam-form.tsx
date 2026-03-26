@@ -203,7 +203,7 @@ export default function CreateSlamForm() {
       <Textarea
         label="Opis (opcjonalnie)"
         placeholder="Opis wydarzenia — pojawi się na stronie zapisu dla uczestników..."
-        rows={2}
+        rows={1}
         value={form.description}
         onChange={(e) => setForm({ ...form, description: e.target.value })}
       />
