@@ -10,6 +10,7 @@ export const createSlamSchema = z.object({
     .int()
     .min(1, 'Minimum 1 uczestnik')
     .max(500, 'Maksimum 500 uczestników'),
+  location: z.string().max(500).optional().or(z.literal('')),
   organizer_email: z.string().email('Nieprawidłowy adres email').optional().or(z.literal('')),
   image_url: z.string().url().optional().or(z.literal('')),
   dashboard_password: z.string().min(4).max(100).optional().or(z.literal('')),

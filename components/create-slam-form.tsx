@@ -12,6 +12,7 @@ export default function CreateSlamForm() {
     description: '',
     event_date: '',
     max_participants: 20,
+    location: '',
     organizer_email: '',
     image_url: '',
   })
@@ -234,7 +235,13 @@ export default function CreateSlamForm() {
         </div>
       </div>
       <Input
-        label="Twój email (dostaniesz linki na skrzynkę)"
+        label="Lokalizacja (opcjonalnie)"
+        placeholder="np. link Google Maps lub nazwa miejsca"
+        value={form.location}
+        onChange={(e) => setForm({ ...form, location: e.target.value })}
+      />
+      <Input
+        label="Twój email"
         type="email"
         placeholder="organizator@example.com"
         value={form.organizer_email}

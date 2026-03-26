@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS slams (
   image_url        text,           -- URL zdjęcia (wgrywane do Supabase Storage)
   dashboard_password_hash text,   -- opcjonalne hasło do dashboardu (sól:hash)
   organizer_message text,         -- opcjonalna wiadomość od organizatora (pojawia się w mailach)
+  location         text,           -- lokalizacja / link do Google Maps
   created_at       timestamptz DEFAULT now()
 );
 
@@ -130,3 +131,4 @@ ALTER TABLE registrations DISABLE ROW LEVEL SECURITY;
 -- ALTER TABLE registrations DROP CONSTRAINT IF EXISTS registrations_status_check;
 -- ALTER TABLE registrations ADD CONSTRAINT registrations_status_check CHECK (status IN ('confirmed', 'waiting', 'cancelled'));
 -- ALTER TABLE slams ADD COLUMN IF NOT EXISTS organizer_message text;
+-- ALTER TABLE slams ADD COLUMN IF NOT EXISTS location text;

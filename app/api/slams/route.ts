@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    const { organizer_name, name, description, event_date, max_participants, organizer_email, image_url, dashboard_password } = parsed.data
+    const { organizer_name, name, description, event_date, max_participants, location, organizer_email, image_url, dashboard_password } = parsed.data
     const organizer_token = generateToken()
 
     const { data: slam, error } = await supabase
@@ -28,6 +28,7 @@ export async function POST(req: NextRequest) {
         event_date,
         max_participants,
         organizer_token,
+        location: location || null,
         organizer_email: organizer_email || null,
         image_url: image_url || null,
         dashboard_password_hash: dashboard_password ? hashPassword(dashboard_password) : null,

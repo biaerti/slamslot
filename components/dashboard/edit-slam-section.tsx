@@ -15,6 +15,7 @@ export default function EditSlamSection({ slam, organizerToken, onSaved }: EditS
   const [saving, setSaving] = useState(false)
   const [name, setName] = useState(slam.name)
   const [description, setDescription] = useState(slam.description ?? '')
+  const [location, setLocation] = useState(slam.location ?? '')
   const [eventDate, setEventDate] = useState(
     slam.event_date ? slam.event_date.replace(' ', 'T').slice(0, 16) : ''
   )
@@ -29,12 +30,13 @@ export default function EditSlamSection({ slam, organizerToken, onSaved }: EditS
         body: JSON.stringify({
           name,
           description,
+          location,
           event_date: eventDate ? eventDate.replace('T', ' ') : undefined,
           max_participants: maxParticipants,
         }),
       })
       if (!res.ok) throw new Error()
-      onSaved({ name, description: description || null, event_date: eventDate.replace('T', ' '), max_participants: Number(maxParticipants) })
+      onSaved({ name, description: description || null, location: location || null, event_date: eventDate.replace('T', ' '), max_participants: Number(maxParticipants) })
       toast.success('Dane slamu zaktualizowane')
       setOpen(false)
     } catch {
@@ -86,6 +88,15 @@ export default function EditSlamSection({ slam, organizerToken, onSaved }: EditS
                   className="w-full bg-[#111] border border-[#2a2a2a] text-[#aaa] text-sm px-3 py-2 focus:outline-none focus:border-[#444]"
                 />
               </div>
+            </div>
+            <div className="md:col-span-2">
+              <label className="block text-xs text-[#555] uppercase tracking-wider mb-1">Lokalizacja (opcjonalnie)</label>
+              <input
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
+                placeholder="np. link Google Maps lub nazwa miejsca"
+                className="w-full bg-[#111] border border-[#2a2a2a] text-[#aaa] text-sm px-3 py-2 focus:outline-none focus:border-[#444]"
+              />
             </div>
             <div className="md:col-span-2">
               <label className="block text-xs text-[#555] uppercase tracking-wider mb-1">Opis (opcjonalnie)</label>

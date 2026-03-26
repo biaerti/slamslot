@@ -8,6 +8,7 @@ export interface Slam {
   organizer_token: string
   fb_event_url: string | null
   image_url: string | null
+  location: string | null
   organizer_email: string | null
   dashboard_password_hash: string | null
   organizer_message: string | null
@@ -40,6 +41,8 @@ export interface SlamPublic {
   confirmed_count: number
   waiting_count: number
   image_url: string | null
+  location: string | null
+  organizer_name: string
 }
 
 export interface DashboardData {

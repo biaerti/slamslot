@@ -43,9 +43,10 @@ export default async function SlamPage(props: { params: Promise<{ id: string }> 
           <p className="text-xs font-bold text-[#c0392b] uppercase tracking-widest mb-4">
             Slam poetycki
           </p>
-          <h1 className="font-display text-5xl lg:text-7xl text-white leading-none mb-6">
+          <h1 className="font-display text-5xl lg:text-7xl text-white leading-none mb-2">
             {slam.name}
           </h1>
+          <p className="text-[#666] text-sm mb-6">{slam.organizer_name}</p>
           {slam.description && (
             <ExpandableDescription text={slam.description} />
           )}
@@ -67,6 +68,31 @@ export default async function SlamPage(props: { params: Promise<{ id: string }> 
                   : `${spotsLeft} z ${slam.max_participants} dostępnych`}
               </span>
             </div>
+            {slam.location && (
+              <div className="flex items-center gap-3">
+                <span className="w-1.5 h-1.5 bg-[#555] rounded-full" />
+                {slam.location.startsWith('http') ? (
+                  <a
+                    href={slam.location}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[#aaa] hover:text-white transition-colors flex items-center gap-1.5"
+                  >
+                    <svg className="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                    </svg>
+                    Lokalizacja
+                  </a>
+                ) : (
+                  <span className="text-[#aaa] flex items-center gap-1.5">
+                    <svg className="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                    </svg>
+                    {slam.location}
+                  </span>
+                )}
+              </div>
+            )}
           </div>
 
           {isFull && (

@@ -8,7 +8,7 @@ export async function GET(
 
   const { data: slam, error } = await supabase
     .from('slams')
-    .select('id, organizer_name, name, description, event_date, max_participants, image_url')
+    .select('id, organizer_name, name, description, event_date, max_participants, image_url, location')
     .eq('id', id)
     .single()
 
