@@ -185,7 +185,7 @@ export default function CreateSlamForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-3">
       <Input
         label="Nazwa organizatora / kolektywu"
         placeholder="np. Jan Kowalski, Sztuka na Miejscu"
