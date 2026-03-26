@@ -165,6 +165,7 @@ export default function DashboardClient({ data: initialData, organizerToken }: D
           slamName={data.slam.name}
           slamDate={formattedDate}
           organizerMessage={message}
+          organizerEmail={data.slam.organizer_email ?? undefined}
           onClose={() => setShowPreview(false)}
         />
       )}

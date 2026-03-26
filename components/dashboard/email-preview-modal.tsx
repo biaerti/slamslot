@@ -4,6 +4,7 @@ interface EmailPreviewModalProps {
   slamName: string
   slamDate: string
   organizerMessage: string
+  organizerEmail?: string
   onClose: () => void
 }
 
@@ -11,6 +12,7 @@ export default function EmailPreviewModal({
   slamName,
   slamDate,
   organizerMessage,
+  organizerEmail,
   onClose,
 }: EmailPreviewModalProps) {
   return (
@@ -89,6 +91,12 @@ export default function EmailPreviewModal({
           </p>
 
           <hr style={{ borderColor: '#333', margin: '0 0 16px' }} />
+          {organizerEmail && (
+            <p style={{ color: '#888', fontSize: 13, lineHeight: '20px', margin: '0 0 16px' }}>
+              Masz pytania? Napisz do organizatora:{' '}
+              <span style={{ color: '#c0392b' }}>{organizerEmail}</span>
+            </p>
+          )}
           <p style={{ color: '#666', fontSize: 13, margin: 0 }}>Do zobaczenia na slamie!</p>
         </div>
 
