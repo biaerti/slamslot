@@ -189,14 +189,14 @@ export default function CreateSlamForm() {
     <form onSubmit={handleSubmit} className="space-y-3">
       <Input
         label="Nazwa organizatora / kolektywu"
-        placeholder="np. Jan Kowalski, Sztuka na Miejscu"
+        placeholder="np. SlamSlot"
         value={form.organizer_name}
         onChange={(e) => setForm({ ...form, organizer_name: e.target.value })}
         required
       />
       <Input
         label="Nazwa slamu"
-        placeholder="np. Slam Wrocław #12"
+        placeholder="np. Slam w Pubie Slot #15"
         value={form.name}
         onChange={(e) => setForm({ ...form, name: e.target.value })}
         required

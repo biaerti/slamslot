@@ -14,7 +14,7 @@ export default function OSlamiePage() {
         <section>
           <p className="text-xs font-bold text-[#c0392b] uppercase tracking-widest mb-4">Czym jest</p>
           <h1 className="font-display text-6xl text-white leading-none mb-8">
-            SLAM<br />POETYCKI
+            SLAM POETYCKI
           </h1>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-[#aaa] leading-relaxed">
             <div>
