@@ -208,53 +208,41 @@ export default function CreateSlamForm() {
         value={form.description}
         onChange={(e) => setForm({ ...form, description: e.target.value })}
       />
-      <div className="flex gap-4">
-        <div className="flex-1">
-          <Input
-            label="Data i godzina"
-            type="datetime-local"
-            value={form.event_date}
-            min="2020-01-01T00:00"
-            max="2099-12-31T23:59"
-            onChange={(e) => setForm({ ...form, event_date: e.target.value })}
-            required
-          />
-        </div>
-        <div className="w-52">
-          <Input
-            label="Liczba miejsc"
-            type="number"
-            min={1}
-            max={500}
-            value={form.max_participants}
-            onChange={(e) =>
-              setForm({ ...form, max_participants: parseInt(e.target.value) || 20 })
-            }
-            required
-          />
-        </div>
-      </div>
-      <div className="flex gap-4">
-        <div className="flex-1">
-          <Input
-            label="Twój email"
-            type="email"
-            placeholder="organizator@example.com"
-            value={form.organizer_email}
-            onChange={(e) => setForm({ ...form, organizer_email: e.target.value })}
-            autoComplete="email"
-          />
-        </div>
-        <div className="w-52">
-          <label className="block text-xs font-semibold text-[#aaa] uppercase tracking-wide mb-1 whitespace-nowrap">
-            Lokalizacja (opcjonalnie)
-          </label>
-          <Input
-            placeholder="adres / link Google Maps"
-            value={form.location}
-            onChange={(e) => setForm({ ...form, location: e.target.value })}
-          />
-        </div>
+      <div className="grid grid-cols-[1fr_13rem] gap-4">
+        <Input
+          label="Data i godzina"
+          type="datetime-local"
+          value={form.event_date}
+          min="2020-01-01T00:00"
+          max="2099-12-31T23:59"
+          onChange={(e) => setForm({ ...form, event_date: e.target.value })}
+          required
+        />
+        <Input
+          label="Liczba miejsc"
+          type="number"
+          min={1}
+          max={500}
+          value={form.max_participants}
+          onChange={(e) =>
+            setForm({ ...form, max_participants: parseInt(e.target.value) || 20 })
+          }
+          required
+        />
+        <Input
+          label="Twój email"
+          type="email"
+          placeholder="organizator@example.com"
+          value={form.organizer_email}
+          onChange={(e) => setForm({ ...form, organizer_email: e.target.value })}
+          autoComplete="email"
+        />
+        <Input
+          label="Lokalizacja (opcjonalnie)"
+          placeholder="adres / link Google Maps"
+          value={form.location}
+          onChange={(e) => setForm({ ...form, location: e.target.value })}
+        />
       </div>
       <div className="w-full">
         <label className="block text-sm font-semibold text-[#aaa] uppercase tracking-wider mb-1.5">
