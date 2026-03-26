@@ -220,7 +220,7 @@ export default function CreateSlamForm() {
             required
           />
         </div>
-        <div className="w-36">
+        <div className="w-44">
           <Input
             label="Liczba miejsc"
             type="number"
@@ -234,20 +234,26 @@ export default function CreateSlamForm() {
           />
         </div>
       </div>
-      <Input
-        label="Lokalizacja (opcjonalnie)"
-        placeholder="np. link Google Maps lub nazwa miejsca"
-        value={form.location}
-        onChange={(e) => setForm({ ...form, location: e.target.value })}
-      />
-      <Input
-        label="Twój email"
-        type="email"
-        placeholder="organizator@example.com"
-        value={form.organizer_email}
-        onChange={(e) => setForm({ ...form, organizer_email: e.target.value })}
-        autoComplete="email"
-      />
+      <div className="flex gap-4">
+        <div className="flex-1">
+          <Input
+            label="Twój email"
+            type="email"
+            placeholder="organizator@example.com"
+            value={form.organizer_email}
+            onChange={(e) => setForm({ ...form, organizer_email: e.target.value })}
+            autoComplete="email"
+          />
+        </div>
+        <div className="w-44">
+          <Input
+            label="Lokalizacja (opcjonalnie)"
+            placeholder="np. link Google Maps"
+            value={form.location}
+            onChange={(e) => setForm({ ...form, location: e.target.value })}
+          />
+        </div>
+      </div>
       <div className="w-full">
         <label className="block text-sm font-semibold text-[#aaa] uppercase tracking-wider mb-1.5">
           Zdjęcie / logo wydarzenia (opcjonalnie)
