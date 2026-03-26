@@ -220,7 +220,7 @@ export default function CreateSlamForm() {
             required
           />
         </div>
-        <div className="w-44">
+        <div className="w-52">
           <Input
             label="Liczba miejsc"
             type="number"
@@ -246,9 +246,11 @@ export default function CreateSlamForm() {
           />
         </div>
         <div className="w-52">
+          <label className="block text-xs font-semibold text-[#aaa] uppercase tracking-wide mb-1 whitespace-nowrap">
+            Lokalizacja (opcjonalnie)
+          </label>
           <Input
-            label="Lokalizacja"
-            placeholder="np. link Google Maps"
+            placeholder="adres / link Google Maps"
             value={form.location}
             onChange={(e) => setForm({ ...form, location: e.target.value })}
           />
