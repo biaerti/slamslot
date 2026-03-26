@@ -8,6 +8,7 @@ import { pl } from 'date-fns/locale'
 import type { DashboardData } from '@/types'
 import { DashboardPasswordGate } from './dashboard-password-gate'
 import EmailPreviewModal from './email-preview-modal'
+import EditSlamSection from './edit-slam-section'
 
 const DashboardLists = dynamic(() => import('./dashboard-lists'), { ssr: false })
 
@@ -117,6 +118,13 @@ export default function DashboardClient({ data: initialData, organizerToken }: D
           </div>
         </div>
       </div>
+
+      {/* Edit slam */}
+      <EditSlamSection
+        slam={data.slam}
+        organizerToken={organizerToken}
+        onSaved={(updated) => setData((d) => ({ ...d, slam: { ...d.slam, ...updated } }))}
+      />
 
       {/* Organizer message */}
       <div className="border-b border-[#2a2a2a] px-6 py-5 bg-[#0a0a0a]">
