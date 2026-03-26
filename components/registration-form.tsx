@@ -54,9 +54,9 @@ export default function RegistrationForm({ slamId, slamName, organizerName }: Re
         autoComplete="name"
       />
       <Input
-        label="Email"
+        label="Email (dostaniesz potwierdzenie na skrzynkę)"
         type="email"
-        placeholder="anna@example.com — dostaniesz potwierdzenie na skrzynkę"
+        placeholder="anna@example.com"
         value={form.email}
         onChange={(e) => setForm({ ...form, email: e.target.value })}
         required
@@ -73,7 +73,7 @@ export default function RegistrationForm({ slamId, slamName, organizerName }: Re
       <Textarea
         label="Uwagi (opcjonalnie)"
         placeholder="Czy masz jakieś szczególne potrzeby lub chcesz coś nam powiedzieć?"
-        rows={2}
+        rows={1}
         value={form.note}
         onChange={(e) => setForm({ ...form, note: e.target.value })}
       />
