@@ -3,6 +3,7 @@ import { format } from 'date-fns'
 import { pl } from 'date-fns/locale'
 import RegistrationForm from '@/components/registration-form'
 import Nav from '@/components/nav'
+import ExpandableDescription from '@/components/expandable-description'
 import type { SlamPublic } from '@/types'
 
 export default async function SlamPage(props: { params: Promise<{ id: string }> }) {
@@ -46,9 +47,7 @@ export default async function SlamPage(props: { params: Promise<{ id: string }> 
             {slam.name}
           </h1>
           {slam.description && (
-            <p className="text-[#aaa] text-lg leading-relaxed mb-8 max-w-md">
-              {slam.description}
-            </p>
+            <ExpandableDescription text={slam.description} />
           )}
           <div className="space-y-3 text-sm">
             <div className="flex items-center gap-3">
