@@ -50,10 +50,10 @@ export default function EditSlamSection({ slam, organizerToken, onSaved }: EditS
         onClick={() => setOpen(!open)}
         className="w-full px-6 py-3 flex items-center justify-between text-left hover:bg-[#111] transition-colors"
       >
-        <span className="text-xs font-bold text-[#555] uppercase tracking-widest">
+        <span className="text-xs font-bold text-[#888] uppercase tracking-widest">
           Edytuj dane slamu
         </span>
-        <span className="text-[#555] text-sm">{open ? '↑' : '↓'}</span>
+        <span className="text-[#888] text-sm">{open ? '↑' : '↓'}</span>
       </button>
 
       {open && (
