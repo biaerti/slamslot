@@ -217,51 +217,31 @@ export default function CreateSlamForm() {
         value={form.fb_event_url}
         onChange={(e) => setForm({ ...form, fb_event_url: e.target.value })}
       />
-      <div className="grid grid-cols-[1fr_13rem] gap-4">
-        <Input
-          label="Data i godzina"
-          type="datetime-local"
-          value={form.event_date}
-          min="2020-01-01T00:00"
-          max="2099-12-31T23:59"
-          onChange={(e) => setForm({ ...form, event_date: e.target.value })}
-          required
-        />
-        <Input
-          label="Liczba miejsc"
-          type="number"
-          min={1}
-          max={500}
-          value={form.max_participants}
-          onChange={(e) =>
-            setForm({ ...form, max_participants: parseInt(e.target.value) || 20 })
-          }
-          required
-        />
-        <Input
-          label="Twój email (dostaniesz linki na skrzynkę)"
-          type="email"
-          placeholder="organizator@example.com"
-          value={form.organizer_email}
-          onChange={(e) => setForm({ ...form, organizer_email: e.target.value })}
-          autoComplete="email"
-        />
-        <Input
-          label="Lokalizacja (opcjonalnie)"
-          placeholder="lokal / link GoogleMaps"
-          value={form.location}
-          onChange={(e) => setForm({ ...form, location: e.target.value })}
-        />
-      </div>
-      <div className="w-full">
-        <div className="flex items-center justify-between mb-1.5">
-          <div className="flex items-baseline gap-2">
-            <label className="block text-xs font-semibold text-[#aaa] uppercase tracking-wider">
-              Zdjęcie / logo wydarzenia (opcjonalnie)
-            </label>
-            <span className="text-xs text-[#555]">sugerowany format 1:1</span>
-          </div>
-          <label className="flex items-center gap-1.5 cursor-pointer group">
+      <div className="flex gap-4">
+        <div className="flex-1">
+          <Input
+            label="Data i godzina"
+            type="datetime-local"
+            value={form.event_date}
+            min="2020-01-01T00:00"
+            max="2099-12-31T23:59"
+            onChange={(e) => setForm({ ...form, event_date: e.target.value })}
+            required
+          />
+        </div>
+        <div className="w-52 flex flex-col gap-1">
+          <Input
+            label="Liczba miejsc"
+            type="number"
+            min={1}
+            max={500}
+            value={form.max_participants}
+            onChange={(e) =>
+              setForm({ ...form, max_participants: parseInt(e.target.value) || 20 })
+            }
+            required
+          />
+          <label className="flex items-center gap-1.5 cursor-pointer group mt-0.5">
             <input
               type="checkbox"
               checked={form.show_spots}
@@ -273,11 +253,39 @@ export default function CreateSlamForm() {
             </span>
             <span
               title="Na stronie zapisu uczestnicy zobaczą ile miejsc jest jeszcze dostępnych"
-              className="text-[#444] hover:text-[#888] transition-colors cursor-help text-xs leading-none"
+              className="text-[#444] hover:text-[#888] transition-colors cursor-help text-xs"
             >
               ?
             </span>
           </label>
+        </div>
+      </div>
+      <div className="flex gap-4">
+        <div className="flex-1">
+          <Input
+            label="Twój email (dostaniesz linki na skrzynkę)"
+            type="email"
+            placeholder="organizator@example.com"
+            value={form.organizer_email}
+            onChange={(e) => setForm({ ...form, organizer_email: e.target.value })}
+            autoComplete="email"
+          />
+        </div>
+        <div className="w-52">
+          <Input
+            label="Lokalizacja (opcjonalnie)"
+            placeholder="lokal / link GoogleMaps"
+            value={form.location}
+            onChange={(e) => setForm({ ...form, location: e.target.value })}
+          />
+        </div>
+      </div>
+      <div className="w-full">
+        <div className="flex items-baseline gap-2 mb-1.5">
+          <label className="block text-xs font-semibold text-[#aaa] uppercase tracking-wider">
+            Zdjęcie / logo wydarzenia (opcjonalnie)
+          </label>
+          <span className="text-xs text-[#555]">sugerowany format 1:1</span>
         </div>
         <label className="flex items-center gap-3 cursor-pointer group">
           <div className="flex-1 border border-dashed border-[#2a2a2a] group-hover:border-[#555] px-4 py-3 transition-colors text-sm text-[#555] group-hover:text-[#888]">
