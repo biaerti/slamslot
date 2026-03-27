@@ -40,8 +40,8 @@ export default function HomePage() {
         </div>
 
         {/* Form right */}
-        <div className="lg:w-1/2 px-8 py-4 lg:px-12 flex flex-col justify-center bg-[#0d0d0d] lg:overflow-y-auto">
-          <p className="font-display text-3xl text-white mb-2 tracking-wide">
+        <div className="lg:w-1/2 px-8 py-2 lg:px-12 flex flex-col justify-center bg-[#0d0d0d] lg:overflow-y-auto">
+          <p className="font-display text-2xl text-white mb-1 tracking-wide">
             STWÓRZ SLAM
           </p>
           <CreateSlamForm />

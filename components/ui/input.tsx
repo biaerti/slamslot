@@ -8,7 +8,7 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 }
 
 const baseClass =
-  'w-full bg-[#1a1a1a] border border-[#2a2a2a] text-[#f0f0f0] placeholder-[#555] px-4 py-2.5 focus:outline-none focus:border-[#c0392b] transition-colors'
+  'w-full bg-[#1a1a1a] border border-[#2a2a2a] text-[#f0f0f0] placeholder-[#555] px-4 py-2 focus:outline-none focus:border-[#c0392b] transition-colors'
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
   ({ label, error, className = '', ...props }, ref) => (
