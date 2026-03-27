@@ -43,7 +43,10 @@ export default async function SlamPage(props: { params: Promise<{ id: string }> 
           <p className="text-xs font-bold text-[#c0392b] uppercase tracking-widest mb-4">
             Slam poetycki
           </p>
-          <h1 className="font-display text-5xl lg:text-7xl text-white leading-none mb-2">
+          <h1
+            className="font-display text-white leading-none mb-2"
+            style={{ fontSize: 'clamp(1.75rem, 5vw, 4.5rem)' }}
+          >
             {slam.name}
           </h1>
           <p className="text-[#666] text-sm mb-6">{slam.organizer_name}</p>

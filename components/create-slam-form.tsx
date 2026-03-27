@@ -238,7 +238,7 @@ export default function CreateSlamForm() {
           required
         />
         <Input
-          label="Twój email"
+          label="Twój email (dostaniesz linki na skrzynkę)"
           type="email"
           placeholder="organizator@example.com"
           value={form.organizer_email}
