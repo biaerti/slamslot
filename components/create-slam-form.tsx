@@ -187,7 +187,7 @@ export default function CreateSlamForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-3">
+    <form onSubmit={handleSubmit} className="space-y-2">
       <Input
         label="Nazwa organizatora / kolektywu"
         placeholder="np. SlamSlot"
@@ -247,7 +247,7 @@ export default function CreateSlamForm() {
         />
         <Input
           label="Lokalizacja (opcjonalnie)"
-          placeholder="lokal / link Google Maps"
+          placeholder="lokal / link GoogleMaps"
           value={form.location}
           onChange={(e) => setForm({ ...form, location: e.target.value })}
         />

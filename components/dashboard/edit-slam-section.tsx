@@ -102,7 +102,7 @@ export default function EditSlamModal({ slam, organizerToken, onSaved, onClose }
             <input
               value={location}
               onChange={(e) => setLocation(e.target.value)}
-              placeholder="np. link Google Maps lub nazwa miejsca"
+              placeholder="np. link GoogleMaps lub nazwa miejsca"
               className="w-full bg-[#1a1a1a] border border-[#2a2a2a] text-[#aaa] text-sm px-3 py-2 focus:outline-none focus:border-[#444] placeholder:text-[#3a3a3a]"
             />
           </div>
