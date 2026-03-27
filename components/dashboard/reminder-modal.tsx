@@ -209,7 +209,7 @@ export default function ReminderModal({
                     slamName={slam.name}
                     slamDate={formattedDate}
                     reminderMessage={reminderMessage}
-                    organizerMessage={slam.organizer_message ?? ''}
+                    organizerMessage={skipOrganizerMessage ? '' : (slam.organizer_message ?? '')}
                     organizerEmail={slam.organizer_email ?? undefined}
                   />
                 </div>
