@@ -26,7 +26,7 @@ export default function PromotedEmail({
   position,
   organizerMessage,
 }: PromotedEmailProps) {
-  const formattedDate = format(new Date(slamDate), "d MMMM yyyy, HH:mm", { locale: pl })
+  const formattedDate = format(new Date(slamDate.replace(' ', 'T')), "d MMMM yyyy, HH:mm", { locale: pl })
 
   return (
     <Html>

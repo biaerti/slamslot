@@ -34,7 +34,7 @@ export default function ReminderEmail({
   organizerEmail,
   reminderMessage,
 }: ReminderEmailProps) {
-  const formattedDate = format(new Date(slamDate), "d MMMM yyyy, HH:mm", { locale: pl })
+  const formattedDate = format(new Date(slamDate.replace(' ', 'T')), "d MMMM yyyy, HH:mm", { locale: pl })
 
   return (
     <Html>

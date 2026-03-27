@@ -12,7 +12,7 @@ interface OrganizerEmailProps {
 }
 
 export default function OrganizerEmail({ slamName, slamDate, publicUrl, dashboardUrl }: OrganizerEmailProps) {
-  const formattedDate = format(new Date(slamDate), "d MMMM yyyy, HH:mm", { locale: pl })
+  const formattedDate = format(new Date(slamDate.replace(' ', 'T')), "d MMMM yyyy, HH:mm", { locale: pl })
 
   return (
     <Html>
