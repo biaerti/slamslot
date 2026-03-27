@@ -38,7 +38,7 @@ export default function OProjekcie() {
                 <div className="flex items-center gap-2">
                   <p className="text-white font-semibold">Bartosz Kuniński</p>
                   <a
-                    href="https://www.instagram.com/biaerti/"
+                    href="https://www.instagram.com/b.aerti/"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-[#555] hover:text-[#c0392b] transition-colors"
