@@ -42,6 +42,7 @@ export async function PATCH(
           slamName: slam.name,
           slamDate: slam.event_date,
           position: updated.position,
+          cancelToken: updated.cancel_token,
           organizerMessage: slam.organizer_message,
         })
       }
@@ -92,6 +93,7 @@ export async function DELETE(
           slamName: slam.name,
           slamDate: slam.event_date,
           position: promoted.position,
+          cancelToken: promoted.cancel_token,
           organizerMessage: slam.organizer_message,
         })
       }

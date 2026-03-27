@@ -82,6 +82,7 @@ export async function sendPromotedEmail(params: {
   slamName: string
   slamDate: string
   position: number
+  cancelToken?: string | null
   organizerMessage?: string | null
 }) {
   try {
@@ -90,6 +91,7 @@ export async function sendPromotedEmail(params: {
       slamName: params.slamName,
       slamDate: params.slamDate,
       position: params.position,
+      cancelUrl: params.cancelToken ? cancelUrl(params.cancelToken) : undefined,
       organizerMessage: params.organizerMessage ?? undefined,
     }))
     await sendEmail(params.to, `Dostałeś/łaś się! — ${params.slamName}`, html)

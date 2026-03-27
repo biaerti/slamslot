@@ -21,7 +21,7 @@ export async function POST(
     // Jeśli awansował ktoś z rezerwowej — wyślij mu email
     const { data: promoted } = await supabase
       .from('registrations')
-      .select('name, email, position, waitlist_check_token')
+      .select('name, email, position, cancel_token')
       .eq('slam_id', result.slamId)
       .eq('status', 'confirmed')
       .order('registered_at', { ascending: false })
@@ -31,7 +31,7 @@ export async function POST(
     if (promoted) {
       const { data: slam } = await supabase
         .from('slams')
-        .select('name, event_date')
+        .select('name, event_date, organizer_message, organizer_email')
         .eq('id', result.slamId)
         .single()
 
@@ -42,6 +42,8 @@ export async function POST(
           slamName: slam.name,
           slamDate: slam.event_date,
           position: promoted.position,
+          cancelToken: promoted.cancel_token,
+          organizerMessage: slam.organizer_message,
         })
       }
     }

@@ -7,6 +7,7 @@ import {
   Text,
   Hr,
   Section,
+  Link,
 } from '@react-email/components'
 import { format } from 'date-fns'
 import { pl } from 'date-fns/locale'
@@ -16,6 +17,7 @@ interface PromotedEmailProps {
   slamName: string
   slamDate: string
   position: number
+  cancelUrl?: string
   organizerMessage?: string
 }
 
@@ -24,6 +26,7 @@ export default function PromotedEmail({
   slamName,
   slamDate,
   position,
+  cancelUrl,
   organizerMessage,
 }: PromotedEmailProps) {
   const formattedDate = format(new Date(slamDate.replace(' ', 'T')), "d MMMM yyyy, HH:mm", { locale: pl })
@@ -55,10 +58,20 @@ export default function PromotedEmail({
               <strong>Twoja pozycja:</strong> #{position}
             </Text>
           </Section>
-          <Text style={text}>
-            Jeśli jednak nie możesz wziąć udziału, odpowiedz na tego maila,
-            żebyśmy mogli przepuścić kolejną osobę z listy rezerwowej.
-          </Text>
+          {cancelUrl ? (
+            <Text style={cancelText}>
+              Nie możesz przyjść?{' '}
+              <Link href={cancelUrl} style={cancelLink}>
+                Kliknij tutaj, żeby anulować zapis
+              </Link>
+              {' '}— zwolnisz miejsce dla kolejnej osoby.
+            </Text>
+          ) : (
+            <Text style={cancelText}>
+              Jeśli jednak nie możesz wziąć udziału, napisz do organizatora,
+              żeby zwolnić miejsce dla kolejnej osoby z listy rezerwowej.
+            </Text>
+          )}
           {organizerMessage && (
             <Section style={organizerBox}>
               <Text style={organizerLabel}>Od organizatora:</Text>
@@ -82,6 +95,8 @@ const infoBox = { backgroundColor: '#1a1a1a', border: '1px solid #333', borderLe
 const infoText = { color: '#e0e0e0', fontSize: '15px', margin: '6px 0' }
 const hr = { borderColor: '#333', margin: '20px 0' }
 const footer = { color: '#666', fontSize: '13px', margin: '0' }
+const cancelText = { color: '#888', fontSize: '13px', lineHeight: '20px', margin: '16px 0 0' }
+const cancelLink = { color: '#c0392b', textDecoration: 'underline' }
 const organizerBox = { backgroundColor: '#111', border: '1px solid #2a2a2a', borderLeft: '4px solid #555', padding: '12px 16px', margin: '20px 0' }
 const organizerLabel = { color: '#888', fontSize: '11px', fontWeight: '700', textTransform: 'uppercase' as const, letterSpacing: '1px', margin: '0 0 6px' }
 const organizerText = { color: '#ccc', fontSize: '14px', lineHeight: '22px', margin: '0' }
