@@ -11,6 +11,26 @@ export function DashboardPasswordGate({ organizerToken, onSuccess }: DashboardPa
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [resetSent, setResetSent] = useState(false)
+  const [resetLoading, setResetLoading] = useState(false)
+  const [resetError, setResetError] = useState('')
+
+  const handleReset = async () => {
+    setResetLoading(true)
+    setResetError('')
+    const res = await fetch('/api/dashboard/reset-password', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ organizer_token: organizerToken }),
+    })
+    const data = await res.json()
+    setResetLoading(false)
+    if (res.ok) {
+      setResetSent(true)
+    } else {
+      setResetError(data.error ?? 'Błąd. Spróbuj ponownie.')
+    }
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -57,6 +77,22 @@ export function DashboardPasswordGate({ organizerToken, onSuccess }: DashboardPa
             {loading ? 'Sprawdzam...' : 'Wejdź do dashboardu'}
           </button>
         </form>
+        <div className="mt-4 border-t border-[#2a2a2a] pt-4">
+          {resetSent ? (
+            <p className="text-xs text-green-400">Wysłano link resetujący na adres email organizatora.</p>
+          ) : (
+            <>
+              <button
+                onClick={handleReset}
+                disabled={resetLoading}
+                className="text-xs text-[#555] hover:text-[#aaa] transition-colors disabled:opacity-50"
+              >
+                {resetLoading ? 'Wysyłam...' : 'Nie pamiętam hasła'}
+              </button>
+              {resetError && <p className="mt-1 text-xs text-red-400">{resetError}</p>}
+            </>
+          )}
+        </div>
       </div>
     </div>
   )

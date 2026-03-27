@@ -17,6 +17,7 @@ export default function EditSlamModal({ slam, organizerToken, onSaved, onClose }
   const [description, setDescription] = useState(slam.description ?? '')
   const [location, setLocation] = useState(slam.location ?? '')
   const [fbEventUrl, setFbEventUrl] = useState(slam.fb_event_url ?? '')
+  const [showSpots, setShowSpots] = useState(slam.show_spots ?? true)
   const [eventDate, setEventDate] = useState(
     slam.event_date ? slam.event_date.replace(' ', 'T').slice(0, 16) : ''
   )
@@ -33,12 +34,13 @@ export default function EditSlamModal({ slam, organizerToken, onSaved, onClose }
           description,
           location,
           fb_event_url: fbEventUrl,
+          show_spots: showSpots,
           event_date: eventDate ? eventDate.replace('T', ' ') : undefined,
           max_participants: maxParticipants,
         }),
       })
       if (!res.ok) throw new Error()
-      onSaved({ name, description: description || null, location: location || null, fb_event_url: fbEventUrl || null, event_date: eventDate.replace('T', ' '), max_participants: Number(maxParticipants) })
+      onSaved({ name, description: description || null, location: location || null, fb_event_url: fbEventUrl || null, show_spots: showSpots, event_date: eventDate.replace('T', ' '), max_participants: Number(maxParticipants) })
       toast.success('Dane slamu zaktualizowane')
       onClose()
     } catch {
@@ -86,6 +88,17 @@ export default function EditSlamModal({ slam, organizerToken, onSaved, onClose }
                 onChange={(e) => setMaxParticipants(e.target.value)}
                 className="w-full bg-[#1a1a1a] border border-[#2a2a2a] text-[#aaa] text-sm px-3 py-2 focus:outline-none focus:border-[#444]"
               />
+              <label className="flex items-center gap-1.5 cursor-pointer group mt-1.5">
+                <input
+                  type="checkbox"
+                  checked={showSpots}
+                  onChange={(e) => setShowSpots(e.target.checked)}
+                  className="w-3.5 h-3.5 accent-[#c0392b]"
+                />
+                <span className="text-xs text-[#555] group-hover:text-[#888] transition-colors whitespace-nowrap">
+                  Pokaż wolne
+                </span>
+              </label>
             </div>
           </div>
           <div>
