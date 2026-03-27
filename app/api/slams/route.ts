@@ -10,10 +10,10 @@ export async function POST(req: NextRequest) {
     const parsed = createSlamSchema.safeParse(body)
 
     if (!parsed.success) {
-      return Response.json(
-        { error: 'Nieprawidłowe dane', details: parsed.error.flatten() },
-        { status: 400 }
-      )
+      const fieldErrors = parsed.error.flatten().fieldErrors
+      const first = Object.entries(fieldErrors).find(([, msgs]) => msgs && msgs.length > 0)
+      const message = first ? `${first[0]}: ${first[1]![0]}` : 'Nieprawidłowe dane'
+      return Response.json({ error: message }, { status: 400 })
     }
 
     const { organizer_name, name, description, event_date, max_participants, location, organizer_email, image_url, dashboard_password } = parsed.data
