@@ -1,7 +1,7 @@
 import Link from 'next/link'
 
 interface NavProps {
-  active?: 'o-slamie' | 'nadchodzace-slamy' | 'stworz-slam'
+  active?: 'o-slamie' | 'nadchodzace-slamy' | 'stworz-slam' | 'o-projekcie'
 }
 
 export default function Nav({ active }: NavProps) {
@@ -29,6 +29,7 @@ export default function Nav({ active }: NavProps) {
       <nav className="flex gap-6 text-sm">
         {link('/nadchodzace-slamy', 'Nadchodzące slamy', 'nadchodzace-slamy')}
         {link('/o-slamie', 'O slamie', 'o-slamie')}
+        {link('/o-projekcie', 'O projekcie', 'o-projekcie')}
         <Link
           href="/"
           className={

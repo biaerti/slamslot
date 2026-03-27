@@ -1,5 +1,6 @@
 import CreateSlamForm from '@/components/create-slam-form'
 import Nav from '@/components/nav'
+import Link from 'next/link'
 
 export default function HomePage() {
   return (
@@ -47,6 +48,16 @@ export default function HomePage() {
           <CreateSlamForm />
         </div>
       </div>
+      {/* Footer */}
+      <footer className="border-t border-[#1a1a1a] px-6 py-3 flex items-center justify-between">
+        <p className="text-xs text-[#333]">
+          © Fundacja Destruktura · non-profit
+        </p>
+        <div className="flex gap-4 text-xs">
+          <Link href="/o-projekcie" className="text-[#333] hover:text-[#666] transition-colors">O projekcie</Link>
+          <Link href="/polityka-prywatnosci" className="text-[#333] hover:text-[#666] transition-colors">Polityka prywatności</Link>
+        </div>
+      </footer>
     </main>
   )
 }
