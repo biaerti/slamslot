@@ -269,7 +269,7 @@ export default function CreateSlamForm() {
       <div className="flex flex-col sm:flex-row gap-4">
         <div className="flex-1">
           <Input
-            label="Twój email (dostaniesz linki na skrzynkę)"
+            label="Twój email"
             type="email"
             placeholder="organizator@example.com"
             value={form.organizer_email}
