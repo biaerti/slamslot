@@ -19,9 +19,9 @@ export default function OProjekcie() {
 
           <section>
             <p className="text-base text-[#ddd] leading-relaxed">
-              SlamSlot powstał spontanicznie z potrzeby — organizacja zapisów na slamy poetyckie
-              przez maile i arkusze kalkulacyjne była uciążliwa. Jako osoba zajmująca się
-              automatyzacją procesów po prostu to naprawiłem.
+              SlamSlot powstał z obserwacji — organizatorzy slamów poetyckich żonglują zapisami
+              przez maile i arkusze kalkulacyjne. Jako osoba zajmująca się automatyzacją procesów
+              postanowiłem im to ułatwić.
             </p>
             <p className="mt-4 text-base text-[#ddd] leading-relaxed">
               Narzędzie jest <strong className="text-white">non-profit</strong> — stworzone
@@ -36,7 +36,7 @@ export default function OProjekcie() {
             <div className="flex items-center gap-4 mb-4">
               <div>
                 <p className="text-white font-semibold">Bartosz Kuniński</p>
-                <p className="text-[#666] text-xs mt-0.5">biaerti · automatyzacje procesów · Toruń</p>
+                <p className="text-[#666] text-xs mt-0.5">biaerti (slamowa ksywa) · automatyzacje procesów</p>
               </div>
             </div>
             <p>
@@ -67,7 +67,6 @@ export default function OProjekcie() {
                 alt="Fundacja Destruktura"
                 width={240}
                 height={61}
-                className="invert"
               />
             </a>
           </section>
