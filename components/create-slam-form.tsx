@@ -217,7 +217,7 @@ export default function CreateSlamForm() {
         onChange={(e) => setForm({ ...form, description: e.target.value })}
       />
       <Input
-        label="Link do wydarzenia na Facebooku (opcjonalnie)"
+        label="Link do wydarzenia na FB (opcjonalnie)"
         type="url"
         placeholder="https://facebook.com/events/..."
         value={form.fb_event_url}

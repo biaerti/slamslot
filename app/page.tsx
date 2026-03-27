@@ -49,13 +49,13 @@ export default function HomePage() {
         </div>
       </div>
       {/* Footer */}
-      <footer className="border-t border-[#1a1a1a] px-6 py-3 flex items-center justify-between">
+      <footer className="border-t border-[#1a1a1a] px-6 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
         <p className="text-xs text-[#333]">
           © Fundacja Destruktura · non-profit
         </p>
         <div className="flex gap-4 text-xs">
-          <Link href="/o-projekcie" className="text-[#333] hover:text-[#666] transition-colors">O projekcie</Link>
-          <Link href="/polityka-prywatnosci" className="text-[#333] hover:text-[#666] transition-colors">Polityka prywatności</Link>
+          <Link href="/o-projekcie" className="text-[#333] hover:text-[#666] transition-colors whitespace-nowrap">O projekcie</Link>
+          <Link href="/polityka-prywatnosci" className="text-[#333] hover:text-[#666] transition-colors whitespace-nowrap">Polityka prywatności</Link>
         </div>
       </footer>
     </main>
