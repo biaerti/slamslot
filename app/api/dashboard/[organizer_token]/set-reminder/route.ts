@@ -10,8 +10,8 @@ export async function POST(
     const body = await req.json()
     const { reminder_days_before, reminder_message } = body
 
-    // null = wyłączone, 1 lub 2 = ile dni przed
-    if (reminder_days_before !== null && reminder_days_before !== 1 && reminder_days_before !== 2) {
+    // null = wyłączone, 1/2/3 = ile dni przed
+    if (reminder_days_before !== null && ![1, 2, 3].includes(reminder_days_before)) {
       return Response.json({ error: 'Nieprawidłowa wartość' }, { status: 400 })
     }
 
@@ -23,11 +23,14 @@ export async function POST(
 
     if (!slam) return Response.json({ error: 'Nie znaleziono slamu' }, { status: 404 })
 
+    const { skip_organizer_message } = body
+
     await supabase
       .from('slams')
       .update({
         reminder_days_before: reminder_days_before ?? null,
         reminder_message: reminder_message?.trim() || null,
+        reminder_skip_organizer_message: skip_organizer_message === true,
         // reset sent_at jeśli organizator zmienia ustawienia (żeby ponownie wysłać)
         reminder_sent_at: null,
       })

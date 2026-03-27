@@ -90,6 +90,7 @@ export default function ReminderModal({
 }: ReminderModalProps) {
   const [daysBefore, setDaysBefore] = useState<number | null>(slam.reminder_days_before ?? null)
   const [reminderMessage, setReminderMessage] = useState(slam.reminder_message ?? '')
+  const [skipOrganizerMessage, setSkipOrganizerMessage] = useState(false)
   const [saving, setSaving] = useState(false)
   const [showPreview, setShowPreview] = useState(false)
 
@@ -102,10 +103,11 @@ export default function ReminderModal({
         body: JSON.stringify({
           reminder_days_before: daysBefore,
           reminder_message: reminderMessage.trim() || null,
+          skip_organizer_message: skipOrganizerMessage,
         }),
       })
       if (!res.ok) throw new Error()
-      onSaved({ reminder_days_before: daysBefore, reminder_message: reminderMessage.trim() || null, reminder_sent_at: null })
+      onSaved({ reminder_days_before: daysBefore, reminder_message: reminderMessage.trim() || null, reminder_sent_at: null } as Partial<Slam>)
       toast.success('Przypomnienia skonfigurowane!')
       onClose()
     } catch {
@@ -139,7 +141,7 @@ export default function ReminderModal({
               Kiedy wysłać przypomnienie?
             </p>
             <div className="space-y-2">
-              {([null, 1, 2] as (number | null)[]).map((val) => (
+              {([null, 1, 2, 3] as (number | null)[]).map((val) => (
                 <label key={String(val)} className="flex items-center gap-3 cursor-pointer group">
                   <input
                     type="radio"
@@ -152,6 +154,7 @@ export default function ReminderModal({
                     {val === null && 'Nie wysyłaj przypomnień'}
                     {val === 1 && 'Dzień przed slamem (o 12:00)'}
                     {val === 2 && '2 dni przed slamem (o 12:00)'}
+                    {val === 3 && '3 dni przed slamem (o 12:00)'}
                   </span>
                 </label>
               ))}
@@ -160,20 +163,33 @@ export default function ReminderModal({
 
           {/* Wiadomość w przypomnieniu */}
           {daysBefore !== null && (
-            <div>
-              <label className="block text-xs font-bold text-[#aaa] uppercase tracking-wider mb-1.5">
-                Wiadomość w przypomnieniu (opcjonalnie)
+            <div className="space-y-3">
+              <div>
+                <label className="block text-xs font-bold text-[#aaa] uppercase tracking-wider mb-1.5">
+                  Wiadomość w przypomnieniu (opcjonalnie)
+                </label>
+                <p className="text-xs text-[#444] mb-2">
+                  Jeśli puste — użyta zostanie wiadomość od organizatora z dashboardu.
+                </p>
+                <textarea
+                  value={reminderMessage}
+                  onChange={(e) => setReminderMessage(e.target.value)}
+                  placeholder="np. Prosimy o przybycie 15 min wcześniej. Wejście od ul. Brackiej."
+                  rows={3}
+                  className="w-full bg-[#111] border border-[#2a2a2a] text-[#aaa] text-sm px-3 py-2 resize-none focus:outline-none focus:border-[#444] placeholder:text-[#3a3a3a]"
+                />
+              </div>
+              <label className="flex items-center gap-2 cursor-pointer group">
+                <input
+                  type="checkbox"
+                  checked={skipOrganizerMessage}
+                  onChange={(e) => setSkipOrganizerMessage(e.target.checked)}
+                  className="w-3.5 h-3.5 accent-[#c0392b]"
+                />
+                <span className="text-xs text-[#555] group-hover:text-[#aaa] transition-colors">
+                  Nie dodawaj wiadomości od organizatora z dashboardu
+                </span>
               </label>
-              <p className="text-xs text-[#444] mb-2">
-                Jeśli puste — użyta zostanie wiadomość od organizatora z dashboardu.
-              </p>
-              <textarea
-                value={reminderMessage}
-                onChange={(e) => setReminderMessage(e.target.value)}
-                placeholder="np. Prosimy o przybycie 15 min wcześniej. Wejście od ul. Brackiej."
-                rows={3}
-                className="w-full bg-[#111] border border-[#2a2a2a] text-[#aaa] text-sm px-3 py-2 resize-none focus:outline-none focus:border-[#444] placeholder:text-[#3a3a3a]"
-              />
             </div>
           )}
 

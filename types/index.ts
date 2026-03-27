@@ -15,6 +15,7 @@ export interface Slam {
   organizer_message: string | null
   reminder_days_before: number | null
   reminder_message: string | null
+  reminder_skip_organizer_message: boolean
   reminder_sent_at: string | null
   created_at: string
 }

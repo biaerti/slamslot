@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
   // Znajdź slamy gdzie reminder jest skonfigurowany i jeszcze nie wysłany
   const { data: slams } = await supabase
     .from('slams')
-    .select('id, name, event_date, organizer_email, organizer_message, reminder_days_before, reminder_message')
+    .select('id, name, event_date, organizer_email, organizer_message, reminder_days_before, reminder_message, reminder_skip_organizer_message')
     .not('reminder_days_before', 'is', null)
     .is('reminder_sent_at', null)
 
@@ -62,7 +62,7 @@ export async function GET(req: NextRequest) {
           slamDate: slam.event_date,
           waitlistToken: reg.waitlist_check_token,
           cancelToken: reg.cancel_token,
-          organizerMessage: slam.organizer_message,
+          organizerMessage: slam.reminder_skip_organizer_message ? null : slam.organizer_message,
           organizerEmail: slam.organizer_email,
           reminderMessage: slam.reminder_message,
         })
