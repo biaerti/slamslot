@@ -28,24 +28,24 @@ export default async function SlamPage(props: { params: Promise<{ id: string }> 
 
       <div className="flex flex-1 flex-col lg:flex-row">
         {/* Event info */}
-        <div className="lg:w-1/2 px-8 py-16 lg:px-16 flex flex-col justify-center border-r border-[#2a2a2a] relative overflow-hidden">
+        <div className="lg:w-1/2 border-r border-[#2a2a2a] relative flex flex-col">
           {slam.image_url && (
             <>
               <div
-                className="absolute inset-0 bg-cover bg-center opacity-20"
+                className="absolute inset-0 bg-cover bg-center opacity-20 pointer-events-none"
                 style={{ backgroundImage: `url(${slam.image_url})` }}
               />
-              <div className="absolute inset-x-0 top-0 h-[40px] z-10" style={{ background: 'linear-gradient(to bottom, #0d0d0d, transparent)' }} />
-              <div className="absolute inset-x-0 bottom-0 h-[40px] z-10" style={{ background: 'linear-gradient(to top, #0d0d0d, transparent)' }} />
+              <div className="absolute inset-x-0 top-0 h-[40px] z-10 pointer-events-none" style={{ background: 'linear-gradient(to bottom, #0d0d0d, transparent)' }} />
+              <div className="absolute inset-x-0 bottom-0 h-[40px] z-10 pointer-events-none" style={{ background: 'linear-gradient(to top, #0d0d0d, transparent)' }} />
             </>
           )}
-          <div className="relative z-10">
+          <div className="relative z-10 px-8 py-8 lg:px-16 flex flex-col justify-center flex-1 overflow-y-auto">
           <p className="text-xs font-bold text-[#c0392b] uppercase tracking-widest mb-4">
             Slam poetycki
           </p>
           <h1
             className="font-display text-white leading-none mb-2"
-            style={{ fontSize: 'clamp(1.75rem, 5vw, 4.5rem)' }}
+            style={{ fontSize: 'clamp(1.5rem, 3.5vw, 4.5rem)' }}
           >
             {slam.name}
           </h1>
