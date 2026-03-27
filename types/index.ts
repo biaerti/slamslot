@@ -42,6 +42,7 @@ export interface SlamPublic {
   waiting_count: number
   image_url: string | null
   location: string | null
+  fb_event_url: string | null
 }
 
 export interface DashboardData {

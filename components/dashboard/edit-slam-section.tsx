@@ -16,6 +16,7 @@ export default function EditSlamModal({ slam, organizerToken, onSaved, onClose }
   const [name, setName] = useState(slam.name)
   const [description, setDescription] = useState(slam.description ?? '')
   const [location, setLocation] = useState(slam.location ?? '')
+  const [fbEventUrl, setFbEventUrl] = useState(slam.fb_event_url ?? '')
   const [eventDate, setEventDate] = useState(
     slam.event_date ? slam.event_date.replace(' ', 'T').slice(0, 16) : ''
   )
@@ -31,12 +32,13 @@ export default function EditSlamModal({ slam, organizerToken, onSaved, onClose }
           name,
           description,
           location,
+          fb_event_url: fbEventUrl,
           event_date: eventDate ? eventDate.replace('T', ' ') : undefined,
           max_participants: maxParticipants,
         }),
       })
       if (!res.ok) throw new Error()
-      onSaved({ name, description: description || null, location: location || null, event_date: eventDate.replace('T', ' '), max_participants: Number(maxParticipants) })
+      onSaved({ name, description: description || null, location: location || null, fb_event_url: fbEventUrl || null, event_date: eventDate.replace('T', ' '), max_participants: Number(maxParticipants) })
       toast.success('Dane slamu zaktualizowane')
       onClose()
     } catch {
@@ -85,6 +87,15 @@ export default function EditSlamModal({ slam, organizerToken, onSaved, onClose }
                 className="w-full bg-[#1a1a1a] border border-[#2a2a2a] text-[#aaa] text-sm px-3 py-2 focus:outline-none focus:border-[#444]"
               />
             </div>
+          </div>
+          <div>
+            <label className="block text-xs text-[#555] uppercase tracking-wider mb-1">Link do FB (opcjonalnie)</label>
+            <input
+              value={fbEventUrl}
+              onChange={(e) => setFbEventUrl(e.target.value)}
+              placeholder="https://facebook.com/events/..."
+              className="w-full bg-[#1a1a1a] border border-[#2a2a2a] text-[#aaa] text-sm px-3 py-2 focus:outline-none focus:border-[#444] placeholder:text-[#3a3a3a]"
+            />
           </div>
           <div>
             <label className="block text-xs text-[#555] uppercase tracking-wider mb-1">Lokalizacja (opcjonalnie)</label>

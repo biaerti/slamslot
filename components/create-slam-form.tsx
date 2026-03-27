@@ -10,6 +10,7 @@ export default function CreateSlamForm() {
     organizer_name: '',
     name: '',
     description: '',
+    fb_event_url: '',
     event_date: '',
     max_participants: 20,
     location: '',
@@ -208,6 +209,13 @@ export default function CreateSlamForm() {
         value={form.description}
         onChange={(e) => setForm({ ...form, description: e.target.value })}
       />
+      <Input
+        label="Link do wydarzenia na Facebooku (opcjonalnie)"
+        type="url"
+        placeholder="https://facebook.com/events/..."
+        value={form.fb_event_url}
+        onChange={(e) => setForm({ ...form, fb_event_url: e.target.value })}
+      />
       <div className="grid grid-cols-[1fr_13rem] gap-4">
         <Input
           label="Data i godzina"
@@ -245,9 +253,12 @@ export default function CreateSlamForm() {
         />
       </div>
       <div className="w-full">
-        <label className="block text-sm font-semibold text-[#aaa] uppercase tracking-wider mb-1.5">
-          Zdjęcie / logo wydarzenia (opcjonalnie)
-        </label>
+        <div className="flex items-baseline gap-2 mb-1.5">
+          <label className="block text-xs font-semibold text-[#aaa] uppercase tracking-wider">
+            Zdjęcie / logo wydarzenia (opcjonalnie)
+          </label>
+          <span className="text-xs text-[#555]">sugerowany format 1:1</span>
+        </div>
         <label className="flex items-center gap-3 cursor-pointer group">
           <div className="flex-1 border border-dashed border-[#2a2a2a] group-hover:border-[#555] px-4 py-3 transition-colors text-sm text-[#555] group-hover:text-[#888]">
             {imageUploading

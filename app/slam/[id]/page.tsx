@@ -68,6 +68,22 @@ export default async function SlamPage(props: { params: Promise<{ id: string }> 
                   : `${spotsLeft} z ${slam.max_participants} dostępnych`}
               </span>
             </div>
+            {slam.fb_event_url && (
+              <div className="flex items-center gap-3">
+                <span className="w-1.5 h-1.5 bg-[#555] rounded-full" />
+                <a
+                  href={slam.fb_event_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[#aaa] hover:text-white transition-colors flex items-center gap-1.5"
+                >
+                  <svg className="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M18 13h-5v7h-2v-7H6v-2h5V6a3 3 0 0 1 3-3h4v2h-4a1 1 0 0 0-1 1v5h5l-1 2z"/>
+                  </svg>
+                  Event na Facebooku
+                </a>
+              </div>
+            )}
             {slam.location && (
               <div className="flex items-center gap-3">
                 <span className="w-1.5 h-1.5 bg-[#555] rounded-full" />

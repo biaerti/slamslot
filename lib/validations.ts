@@ -4,6 +4,7 @@ export const createSlamSchema = z.object({
   organizer_name: z.string().min(1, 'Nazwa organizatora jest wymagana').max(200, 'Nazwa organizatora może mieć max 200 znaków'),
   name: z.string().min(1, 'Nazwa slamu jest wymagana').max(500, 'Nazwa slamu może mieć max 500 znaków'),
   description: z.string().max(10000, 'Opis może mieć max 10 000 znaków').optional(),
+  fb_event_url: z.string().url('Nieprawidłowy link do wydarzenia').optional().or(z.literal('')),
   event_date: z.string().min(1, 'Data jest wymagana'),
   max_participants: z
     .number()
