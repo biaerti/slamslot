@@ -223,7 +223,7 @@ export default function CreateSlamForm() {
         value={form.fb_event_url}
         onChange={(e) => setForm({ ...form, fb_event_url: e.target.value })}
       />
-      <div className="flex gap-4">
+      <div className="flex flex-col sm:flex-row gap-4">
         <div className="flex-1">
           <Input
             label="Data i godzina"
@@ -235,7 +235,7 @@ export default function CreateSlamForm() {
             required
           />
         </div>
-        <div className="w-52 flex flex-col gap-1">
+        <div className="sm:w-52 flex flex-col gap-1">
           <Input
             label="Liczba miejsc"
             type="number"
@@ -266,7 +266,7 @@ export default function CreateSlamForm() {
           </label>
         </div>
       </div>
-      <div className="flex gap-4">
+      <div className="flex flex-col sm:flex-row gap-4">
         <div className="flex-1">
           <Input
             label="Twój email (dostaniesz linki na skrzynkę)"
@@ -277,9 +277,9 @@ export default function CreateSlamForm() {
             autoComplete="email"
           />
         </div>
-        <div className="w-52">
+        <div className="sm:w-52">
           <Input
-            label="Lokalizacja (opcjonalnie)"
+            label="Lokalizacja"
             placeholder="lokal / link GoogleMaps"
             value={form.location}
             onChange={(e) => setForm({ ...form, location: e.target.value })}
