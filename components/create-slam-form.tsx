@@ -280,7 +280,7 @@ export default function CreateSlamForm() {
         <div className="sm:w-52">
           <Input
             label="Lokalizacja"
-            placeholder="lokal / link GoogleMaps"
+            placeholder="Miasto / Lokal"
             value={form.location}
             onChange={(e) => setForm({ ...form, location: e.target.value })}
           />

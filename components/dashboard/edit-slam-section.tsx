@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { toast } from 'sonner'
 import type { Slam } from '@/types'
+import Image from 'next/image'
 
 interface EditSlamModalProps {
   slam: Slam
@@ -22,6 +23,26 @@ export default function EditSlamModal({ slam, organizerToken, onSaved, onClose }
     slam.event_date ? slam.event_date.replace(' ', 'T').slice(0, 16) : ''
   )
   const [maxParticipants, setMaxParticipants] = useState(String(slam.max_participants))
+  const [imageUrl, setImageUrl] = useState(slam.image_url ?? '')
+  const [imageUploading, setImageUploading] = useState(false)
+
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setImageUploading(true)
+    try {
+      const fd = new FormData()
+      fd.append('file', file)
+      const res = await fetch('/api/upload', { method: 'POST', body: fd })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error ?? 'Błąd uploadu')
+      setImageUrl(data.url)
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : 'Błąd uploadu')
+    } finally {
+      setImageUploading(false)
+    }
+  }
 
   const save = async () => {
     setSaving(true)
@@ -37,10 +58,11 @@ export default function EditSlamModal({ slam, organizerToken, onSaved, onClose }
           show_spots: showSpots,
           event_date: eventDate ? eventDate.replace('T', ' ') : undefined,
           max_participants: maxParticipants,
+          image_url: imageUrl || null,
         }),
       })
       if (!res.ok) throw new Error()
-      onSaved({ name, description: description || null, location: location || null, fb_event_url: fbEventUrl || null, show_spots: showSpots, event_date: eventDate.replace('T', ' '), max_participants: Number(maxParticipants) })
+      onSaved({ name, description: description || null, location: location || null, fb_event_url: fbEventUrl || null, show_spots: showSpots, event_date: eventDate.replace('T', ' '), max_participants: Number(maxParticipants), image_url: imageUrl || null })
       toast.success('Dane slamu zaktualizowane')
       onClose()
     } catch {
@@ -115,7 +137,7 @@ export default function EditSlamModal({ slam, organizerToken, onSaved, onClose }
             <input
               value={location}
               onChange={(e) => setLocation(e.target.value)}
-              placeholder="np. link GoogleMaps lub nazwa miejsca"
+              placeholder="Miasto / Lokal"
               className="w-full bg-[#1a1a1a] border border-[#2a2a2a] text-[#aaa] text-sm px-3 py-2 focus:outline-none focus:border-[#444] placeholder:text-[#3a3a3a]"
             />
           </div>
@@ -127,6 +149,39 @@ export default function EditSlamModal({ slam, organizerToken, onSaved, onClose }
               rows={3}
               className="w-full bg-[#1a1a1a] border border-[#2a2a2a] text-[#aaa] text-sm px-3 py-2 resize-none focus:outline-none focus:border-[#444]"
             />
+          </div>
+          <div>
+            <label className="block text-xs text-[#555] uppercase tracking-wider mb-1">
+              Zdjęcie / logo (opcjonalnie)
+            </label>
+            <div className="flex gap-3 items-start">
+              {imageUrl && (
+                <div className="relative w-16 h-16 shrink-0 border border-[#2a2a2a] overflow-hidden">
+                  <Image src={imageUrl} alt="Podgląd" fill className="object-cover" />
+                </div>
+              )}
+              <label className="flex-1 cursor-pointer">
+                <div className="border border-dashed border-[#2a2a2a] hover:border-[#555] px-3 py-2 text-xs text-[#555] hover:text-[#888] transition-colors">
+                  {imageUploading ? 'Wysyłanie...' : imageUrl ? 'Zmień zdjęcie' : 'Wybierz plik (JPG, PNG, WebP, max 5 MB)'}
+                </div>
+                <input
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  className="hidden"
+                  onChange={handleImageChange}
+                  disabled={imageUploading}
+                />
+              </label>
+              {imageUrl && (
+                <button
+                  type="button"
+                  onClick={() => setImageUrl('')}
+                  className="text-xs text-[#555] hover:text-[#c0392b] transition-colors shrink-0 pt-2"
+                >
+                  Usuń
+                </button>
+              )}
+            </div>
           </div>
         </div>
 
