@@ -2,8 +2,8 @@ import { z } from 'zod'
 
 export const createSlamSchema = z.object({
   organizer_name: z.string().min(1, 'Nazwa organizatora jest wymagana').max(200),
-  name: z.string().min(1, 'Nazwa jest wymagana').max(200),
-  description: z.string().max(2000).optional(),
+  name: z.string().min(1, 'Nazwa jest wymagana').max(500),
+  description: z.string().max(10000).optional(),
   event_date: z.string().min(1, 'Data jest wymagana'),
   max_participants: z
     .number()
