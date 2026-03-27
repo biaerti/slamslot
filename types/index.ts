@@ -9,6 +9,7 @@ export interface Slam {
   fb_event_url: string | null
   image_url: string | null
   location: string | null
+  show_spots: boolean
   organizer_email: string | null
   dashboard_password_hash: string | null
   organizer_message: string | null
@@ -43,6 +44,7 @@ export interface SlamPublic {
   image_url: string | null
   location: string | null
   fb_event_url: string | null
+  show_spots: boolean
 }
 
 export interface DashboardData {

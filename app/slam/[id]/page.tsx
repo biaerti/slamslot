@@ -60,17 +60,19 @@ export default async function SlamPage(props: { params: Promise<{ id: string }> 
                 <span className="text-white font-semibold">Data:</span> {formattedDate}
               </span>
             </div>
-            <div className="flex items-center gap-3">
-              <span
-                className={`w-1.5 h-1.5 rounded-full ${isFull ? 'bg-yellow-500' : 'bg-green-500'}`}
-              />
-              <span className="text-[#aaa]">
-                <span className="text-white font-semibold">Miejsca:</span>{' '}
-                {isFull
-                  ? `Brak miejsc (${slam.waiting_count} osób na liście rez.)`
-                  : `${spotsLeft} z ${slam.max_participants} dostępnych`}
-              </span>
-            </div>
+            {slam.show_spots !== false && (
+              <div className="flex items-center gap-3">
+                <span
+                  className={`w-1.5 h-1.5 rounded-full ${isFull ? 'bg-yellow-500' : 'bg-green-500'}`}
+                />
+                <span className="text-[#aaa]">
+                  <span className="text-white font-semibold">Miejsca:</span>{' '}
+                  {isFull
+                    ? `Brak miejsc (${slam.waiting_count} osób na liście rez.)`
+                    : `${spotsLeft} z ${slam.max_participants} dostępnych`}
+                </span>
+              </div>
+            )}
             {slam.fb_event_url && (
               <div className="flex items-center gap-3">
                 <span className="w-1.5 h-1.5 bg-[#555] rounded-full" />

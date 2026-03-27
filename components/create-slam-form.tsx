@@ -16,6 +16,7 @@ export default function CreateSlamForm() {
     location: '',
     organizer_email: '',
     image_url: '',
+    show_spots: true,
   })
   const [imageFile, setImageFile] = useState<File | null>(null)
   const [imagePreview, setImagePreview] = useState<string | null>(null)
@@ -253,11 +254,30 @@ export default function CreateSlamForm() {
         />
       </div>
       <div className="w-full">
-        <div className="flex items-baseline gap-2 mb-1.5">
-          <label className="block text-xs font-semibold text-[#aaa] uppercase tracking-wider">
-            Zdjęcie / logo wydarzenia (opcjonalnie)
+        <div className="flex items-center justify-between mb-1.5">
+          <div className="flex items-baseline gap-2">
+            <label className="block text-xs font-semibold text-[#aaa] uppercase tracking-wider">
+              Zdjęcie / logo wydarzenia (opcjonalnie)
+            </label>
+            <span className="text-xs text-[#555]">sugerowany format 1:1</span>
+          </div>
+          <label className="flex items-center gap-1.5 cursor-pointer group">
+            <input
+              type="checkbox"
+              checked={form.show_spots}
+              onChange={(e) => setForm({ ...form, show_spots: e.target.checked })}
+              className="w-3.5 h-3.5 accent-[#c0392b]"
+            />
+            <span className="text-xs text-[#555] group-hover:text-[#888] transition-colors whitespace-nowrap">
+              Pokaż wolne miejsca
+            </span>
+            <span
+              title="Na stronie zapisu uczestnicy zobaczą ile miejsc jest jeszcze dostępnych"
+              className="text-[#444] hover:text-[#888] transition-colors cursor-help text-xs leading-none"
+            >
+              ?
+            </span>
           </label>
-          <span className="text-xs text-[#555]">sugerowany format 1:1</span>
         </div>
         <label className="flex items-center gap-3 cursor-pointer group">
           <div className="flex-1 border border-dashed border-[#2a2a2a] group-hover:border-[#555] px-4 py-3 transition-colors text-sm text-[#555] group-hover:text-[#888]">

@@ -14,6 +14,7 @@ export const createSlamSchema = z.object({
   location: z.string().max(500, 'Lokalizacja może mieć max 500 znaków').optional().or(z.literal('')),
   organizer_email: z.string().email('Nieprawidłowy adres email').optional().or(z.literal('')),
   image_url: z.string().url().optional().or(z.literal('')),
+  show_spots: z.boolean().optional(),
   dashboard_password: z.string().min(4).max(100).optional().or(z.literal('')),
 })
 
