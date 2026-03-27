@@ -9,6 +9,7 @@ import type { DashboardData } from '@/types'
 import { DashboardPasswordGate } from './dashboard-password-gate'
 import EmailPreviewModal from './email-preview-modal'
 import EditSlamModal from './edit-slam-section'
+import ReminderModal from './reminder-modal'
 
 const DashboardLists = dynamic(() => import('./dashboard-lists'), { ssr: false })
 
@@ -24,6 +25,7 @@ export default function DashboardClient({ data: initialData, organizerToken }: D
   const [messageSaving, setMessageSaving] = useState(false)
   const [showPreview, setShowPreview] = useState(false)
   const [showEdit, setShowEdit] = useState(false)
+  const [showReminder, setShowReminder] = useState(false)
 
   const refresh = useCallback(async () => {
     const res = await fetch(`/api/dashboard/${organizerToken}`)
@@ -109,7 +111,7 @@ export default function DashboardClient({ data: initialData, organizerToken }: D
               </div>
             </div>
           </div>
-          <div className="mt-4 flex gap-3">
+          <div className="mt-4 flex gap-3 flex-wrap">
             <button
               onClick={copyPublicLink}
               className="text-xs text-[#555] hover:text-[#aaa] border border-[#2a2a2a] px-3 py-1.5 transition-colors"
@@ -122,6 +124,14 @@ export default function DashboardClient({ data: initialData, organizerToken }: D
             >
               Edytuj dane slamu
             </button>
+            <button
+              onClick={() => setShowReminder(true)}
+              className="text-xs text-[#555] hover:text-[#aaa] border border-[#2a2a2a] px-3 py-1.5 transition-colors"
+            >
+              {data.slam.reminder_days_before
+                ? `Przypomnienia: ${data.slam.reminder_days_before === 1 ? '1 dzień przed' : '2 dni przed'}`
+                : 'Skonfiguruj przypomnienia'}
+            </button>
           </div>
         </div>
       </div>
@@ -132,6 +142,16 @@ export default function DashboardClient({ data: initialData, organizerToken }: D
           organizerToken={organizerToken}
           onSaved={(updated) => setData((d) => ({ ...d, slam: { ...d.slam, ...updated } }))}
           onClose={() => setShowEdit(false)}
+        />
+      )}
+
+      {showReminder && (
+        <ReminderModal
+          slam={data.slam}
+          organizerToken={organizerToken}
+          formattedDate={formattedDate}
+          onSaved={(updated) => setData((d) => ({ ...d, slam: { ...d.slam, ...updated } }))}
+          onClose={() => setShowReminder(false)}
         />
       )}
 

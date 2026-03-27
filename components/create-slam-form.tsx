@@ -26,6 +26,7 @@ export default function CreateSlamForm() {
     public_url: string
     dashboard_url: string
     organizer_token: string
+    organizer_email?: string
   } | null>(null)
   const [password, setPassword] = useState('')
   const [passwordSaved, setPasswordSaved] = useState(false)
@@ -65,7 +66,7 @@ export default function CreateSlamForm() {
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error ?? 'Błąd')
-      setResult(data)
+      setResult({ ...data, organizer_email: form.organizer_email || undefined })
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : 'Błąd serwera')
     } finally {
@@ -104,7 +105,12 @@ export default function CreateSlamForm() {
       <div className="space-y-6">
         <div className="border-l-4 border-[#c0392b] pl-4">
           <p className="font-display text-3xl text-white">Slam stworzony!</p>
-          <p className="text-[#aaa] mt-1 text-sm">Zapisz oba linki w bezpiecznym miejscu.</p>
+          <p className="text-[#aaa] mt-1 text-sm">
+            Zapisz oba linki w bezpiecznym miejscu.
+            {result.organizer_email && (
+              <> Wysłaliśmy je też na <span className="text-white">{result.organizer_email}</span>.</>
+            )}
+          </p>
         </div>
 
         <div className="space-y-4">

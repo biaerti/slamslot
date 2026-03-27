@@ -21,6 +21,9 @@ CREATE TABLE IF NOT EXISTS slams (
   show_spots       boolean NOT NULL DEFAULT true, -- czy pokazywać liczbę wolnych miejsc
   password_reset_token text,                     -- token do resetu hasła
   password_reset_expires timestamptz,            -- wygaśnięcie tokenu resetu
+  reminder_days_before integer CHECK (reminder_days_before IN (1, 2)), -- ile dni przed eventem wysłać przypomnienie
+  reminder_message text,                         -- opcjonalna wiadomość w przypomnieniu
+  reminder_sent_at timestamptz,                  -- kiedy wysłano przypomnienie (null = jeszcze nie)
   created_at       timestamptz DEFAULT now()
 );
 
@@ -138,3 +141,7 @@ ALTER TABLE registrations DISABLE ROW LEVEL SECURITY;
 -- ALTER TABLE slams ADD COLUMN IF NOT EXISTS show_spots boolean NOT NULL DEFAULT true;
 -- ALTER TABLE slams ADD COLUMN IF NOT EXISTS password_reset_token text;
 -- ALTER TABLE slams ADD COLUMN IF NOT EXISTS password_reset_expires timestamptz;
+-- ALTER TABLE slams ADD COLUMN IF NOT EXISTS reminder_days_before integer CHECK (reminder_days_before IN (1, 2));
+-- ALTER TABLE slams ADD COLUMN IF NOT EXISTS reminder_message text;
+-- ALTER TABLE slams ADD COLUMN IF NOT EXISTS reminder_sent_at timestamptz;
+-- ALTER TABLE registrations ADD COLUMN IF NOT EXISTS attendance_confirmed boolean;

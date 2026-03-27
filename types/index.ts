@@ -13,6 +13,9 @@ export interface Slam {
   organizer_email: string | null
   dashboard_password_hash: string | null
   organizer_message: string | null
+  reminder_days_before: number | null
+  reminder_message: string | null
+  reminder_sent_at: string | null
   created_at: string
 }
 

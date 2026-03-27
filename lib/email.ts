@@ -5,6 +5,7 @@ import WaitlistEmail from '@/components/emails/waitlist-email'
 import PromotedEmail from '@/components/emails/promoted-email'
 import MovedToWaitingEmail from '@/components/emails/moved-to-waiting-email'
 import OrganizerEmail from '@/components/emails/organizer-email'
+import ReminderEmail from '@/components/emails/reminder-email'
 
 const FROM = process.env.EMAIL_FROM ?? 'noreply@slamslot.pl'
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000'
@@ -15,6 +16,10 @@ function waitlistUrl(token: string) {
 
 function cancelUrl(token: string) {
   return `${BASE_URL}/cancel/${token}`
+}
+
+function confirmAttendanceUrl(token: string) {
+  return `${BASE_URL}/reminder/confirm/${token}`
 }
 
 async function sendEmail(to: string, subject: string, html: string) {
@@ -114,6 +119,34 @@ export async function sendMovedToWaitingEmail(params: {
     await sendEmail(params.to, `Zmiana na liście rezerwowej — ${params.slamName}`, html)
   } catch (err) {
     console.error('[email] sendMovedToWaitingEmail failed', err)
+  }
+}
+
+export async function sendReminderEmail(params: {
+  to: string
+  participantName: string
+  slamName: string
+  slamDate: string
+  waitlistToken: string
+  cancelToken?: string | null
+  organizerMessage?: string | null
+  organizerEmail?: string | null
+  reminderMessage?: string | null
+}) {
+  try {
+    const html = await render(ReminderEmail({
+      participantName: params.participantName,
+      slamName: params.slamName,
+      slamDate: params.slamDate,
+      confirmUrl: confirmAttendanceUrl(params.waitlistToken),
+      cancelUrl: params.cancelToken ? cancelUrl(params.cancelToken) : undefined,
+      organizerMessage: params.organizerMessage ?? undefined,
+      organizerEmail: params.organizerEmail ?? undefined,
+      reminderMessage: params.reminderMessage ?? undefined,
+    }))
+    await sendEmail(params.to, `Przypomnienie — jutro ${params.slamName}`, html)
+  } catch (err) {
+    console.error('[email] sendReminderEmail failed', err)
   }
 }
 
