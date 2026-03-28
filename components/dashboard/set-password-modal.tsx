@@ -7,12 +7,14 @@ interface SetPasswordModalProps {
   organizerToken: string
   hasPassword: boolean
   onSaved: () => void
+  onRemoved: () => void
   onClose: () => void
 }
 
-export default function SetPasswordModal({ organizerToken, hasPassword, onSaved, onClose }: SetPasswordModalProps) {
+export default function SetPasswordModal({ organizerToken, hasPassword, onSaved, onRemoved, onClose }: SetPasswordModalProps) {
   const [password, setPassword] = useState('')
   const [saving, setSaving] = useState(false)
+  const [removing, setRemoving] = useState(false)
 
   const handleSave = async () => {
     if (password.length < 4) {
@@ -64,7 +66,7 @@ export default function SetPasswordModal({ organizerToken, hasPassword, onSaved,
           className="w-full bg-[#1a1a1a] border border-[#2a2a2a] text-[#aaa] text-sm px-3 py-2 focus:outline-none focus:border-[#444] placeholder:text-[#3a3a3a] mb-4"
         />
 
-        <div className="flex gap-3">
+        <div className="flex gap-3 flex-wrap">
           <button
             onClick={handleSave}
             disabled={saving}
@@ -72,6 +74,28 @@ export default function SetPasswordModal({ organizerToken, hasPassword, onSaved,
           >
             {saving ? 'Zapisywanie...' : hasPassword ? 'Zmień hasło' : 'Ustaw hasło'}
           </button>
+          {hasPassword && (
+            <button
+              onClick={async () => {
+                setRemoving(true)
+                try {
+                  const res = await fetch(`/api/dashboard/${organizerToken}/remove-password`, { method: 'POST' })
+                  if (!res.ok) throw new Error()
+                  toast.success('Hasło usunięte')
+                  onRemoved()
+                  onClose()
+                } catch {
+                  toast.error('Błąd usuwania hasła')
+                } finally {
+                  setRemoving(false)
+                }
+              }}
+              disabled={removing}
+              className="text-xs text-[#555] hover:text-red-400 border border-[#2a2a2a] hover:border-red-400/40 disabled:opacity-50 px-4 py-2 transition-colors"
+            >
+              {removing ? 'Usuwanie...' : 'Usuń hasło'}
+            </button>
+          )}
           <button
             onClick={onClose}
             className="text-xs text-[#555] hover:text-[#aaa] border border-[#2a2a2a] px-4 py-2 transition-colors"

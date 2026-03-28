@@ -28,6 +28,34 @@ export default function DashboardClient({ data: initialData, organizerToken }: D
   const [showEdit, setShowEdit] = useState(false)
   const [showReminder, setShowReminder] = useState(false)
   const [showSetPassword, setShowSetPassword] = useState(false)
+  const [resetSent, setResetSent] = useState(false)
+  const [resetSending, setResetSending] = useState(false)
+
+  const handleResetPassword = async () => {
+    if (!data.slam.organizer_email) {
+      toast.error('Brak adresu email organizatora — nie można wysłać resetu.')
+      return
+    }
+    setResetSending(true)
+    try {
+      const res = await fetch('/api/dashboard/reset-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ organizer_token: organizerToken }),
+      })
+      if (!res.ok) {
+        const d = await res.json()
+        toast.error(d.error ?? 'Błąd wysyłki')
+        return
+      }
+      setResetSent(true)
+      toast.success('Link resetujący wysłany na email organizatora')
+    } catch {
+      toast.error('Błąd wysyłki')
+    } finally {
+      setResetSending(false)
+    }
+  }
 
   const refresh = useCallback(async () => {
     const res = await fetch(`/api/dashboard/${organizerToken}`)
@@ -78,12 +106,23 @@ export default function DashboardClient({ data: initialData, organizerToken }: D
       <header className="border-b border-[#2a2a2a] px-6 py-4 flex items-center justify-between">
         <p className="font-display text-2xl tracking-widest text-white">SLAMSLOT</p>
         <div className="flex items-center gap-4">
-          <button
-            onClick={() => setShowSetPassword(true)}
-            className="text-[#555] hover:text-[#aaa] text-sm transition-colors"
-          >
-            {data.slam.dashboard_password_hash ? 'Zmień hasło' : 'Ustaw hasło'}
-          </button>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setShowSetPassword(true)}
+              className="text-[#555] hover:text-[#aaa] text-sm transition-colors"
+            >
+              {data.slam.dashboard_password_hash ? 'Zmień hasło' : 'Ustaw hasło'}
+            </button>
+            {data.slam.dashboard_password_hash && (
+              <button
+                onClick={handleResetPassword}
+                disabled={resetSending || resetSent}
+                className="text-xs text-[#3a3a3a] hover:text-[#555] disabled:opacity-50 transition-colors"
+              >
+                {resetSent ? '✓ Link wysłany' : resetSending ? 'Wysyłam...' : 'Nie pamiętam hasła'}
+              </button>
+            )}
+          </div>
           <button
             onClick={refresh}
             className="text-[#555] hover:text-[#aaa] text-sm transition-colors"
@@ -160,6 +199,7 @@ export default function DashboardClient({ data: initialData, organizerToken }: D
           organizerToken={organizerToken}
           hasPassword={!!data.slam.dashboard_password_hash}
           onSaved={() => setData((d) => ({ ...d, slam: { ...d.slam, dashboard_password_hash: 'set' } }))}
+          onRemoved={() => setData((d) => ({ ...d, slam: { ...d.slam, dashboard_password_hash: null } }))}
           onClose={() => setShowSetPassword(false)}
         />
       )}
