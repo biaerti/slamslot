@@ -231,7 +231,7 @@ export default function ReminderModal({
                         const reminderDate = new Date(eventDate)
                         reminderDate.setDate(reminderDate.getDate() - days)
                         const weekday = reminderDate.toLocaleDateString('pl-PL', { weekday: 'long' })
-                        return `Np. slam w ${eventDate.toLocaleDateString('pl-PL', { weekday: 'long' })} → przypomnienie w ${weekday} o 12:00`
+                        return `Np. jeśli ustawisz ${days}, a slam jest w ${eventDate.toLocaleDateString('pl-PL', { weekday: 'long' })} → przypomnienie w ${weekday} o 12:00`
                       })()}
                     </p>
                   )}
