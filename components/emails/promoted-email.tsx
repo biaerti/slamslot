@@ -58,6 +58,12 @@ export default function PromotedEmail({
               <strong>Twoja pozycja:</strong> #{position}
             </Text>
           </Section>
+          {organizerMessage && (
+            <Section style={organizerBox}>
+              <Text style={organizerLabel}>Od organizatora:</Text>
+              <Text style={organizerText}>{organizerMessage}</Text>
+            </Section>
+          )}
           {cancelUrl ? (
             <Text style={cancelText}>
               Nie możesz przyjść?{' '}
@@ -71,12 +77,6 @@ export default function PromotedEmail({
               Jeśli jednak nie możesz wziąć udziału, napisz do organizatora,
               żeby zwolnić miejsce dla kolejnej osoby z listy rezerwowej.
             </Text>
-          )}
-          {organizerMessage && (
-            <Section style={organizerBox}>
-              <Text style={organizerLabel}>Od organizatora:</Text>
-              <Text style={organizerText}>{organizerMessage}</Text>
-            </Section>
           )}
           <Hr style={hr} />
           <Text style={footer}>Do zobaczenia na slamie!</Text>
