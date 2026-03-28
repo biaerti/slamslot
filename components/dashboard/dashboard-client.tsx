@@ -129,7 +129,7 @@ export default function DashboardClient({ data: initialData, organizerToken }: D
               className="text-xs text-[#555] hover:text-[#aaa] border border-[#2a2a2a] px-3 py-1.5 transition-colors"
             >
               {data.slam.reminder_days_before
-                ? `Przypomnienia: ${data.slam.reminder_days_before === 1 ? '1 dzień przed' : '2 dni przed'}`
+                ? `Przypomnienia: ${data.slam.reminder_days_before} ${data.slam.reminder_days_before === 1 ? 'dzień przed' : 'dni przed'}`
                 : 'Skonfiguruj przypomnienia'}
             </button>
           </div>
@@ -150,6 +150,7 @@ export default function DashboardClient({ data: initialData, organizerToken }: D
           slam={data.slam}
           organizerToken={organizerToken}
           formattedDate={formattedDate}
+          confirmedCount={totalConfirmed}
           onSaved={(updated) => setData((d) => ({ ...d, slam: { ...d.slam, ...updated } }))}
           onClose={() => setShowReminder(false)}
         />

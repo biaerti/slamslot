@@ -10,8 +10,8 @@ export async function POST(
     const body = await req.json()
     const { reminder_days_before, reminder_message } = body
 
-    // null = wyłączone, 1/2/3 = ile dni przed
-    if (reminder_days_before !== null && ![1, 2, 3].includes(reminder_days_before)) {
+    // null = wyłączone, liczba 1-30 = ile dni przed
+    if (reminder_days_before !== null && (typeof reminder_days_before !== 'number' || reminder_days_before < 1 || reminder_days_before > 30)) {
       return Response.json({ error: 'Nieprawidłowa wartość' }, { status: 400 })
     }
 

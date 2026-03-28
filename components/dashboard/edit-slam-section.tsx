@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import { toast } from 'sonner'
 import type { Slam } from '@/types'
-import Image from 'next/image'
 
 interface EditSlamModalProps {
   slam: Slam
@@ -155,11 +154,6 @@ export default function EditSlamModal({ slam, organizerToken, onSaved, onClose }
               Zdjęcie / logo (opcjonalnie)
             </label>
             <div className="flex gap-3 items-start">
-              {imageUrl && (
-                <div className="relative w-16 h-16 shrink-0 border border-[#2a2a2a] overflow-hidden">
-                  <Image src={imageUrl} alt="Podgląd" fill className="object-cover" />
-                </div>
-              )}
               <label className="flex-1 cursor-pointer">
                 <div className="border border-dashed border-[#2a2a2a] hover:border-[#555] px-3 py-2 text-xs text-[#555] hover:text-[#888] transition-colors">
                   {imageUploading ? 'Wysyłanie...' : imageUrl ? 'Zmień zdjęcie' : 'Wybierz plik (JPG, PNG, WebP, max 5 MB)'}

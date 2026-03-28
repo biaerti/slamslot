@@ -8,6 +8,7 @@ interface ReminderModalProps {
   slam: Slam
   organizerToken: string
   formattedDate: string
+  confirmedCount: number
   onSaved: (updated: Partial<Slam>) => void
   onClose: () => void
 }
@@ -85,14 +86,30 @@ export default function ReminderModal({
   slam,
   organizerToken,
   formattedDate,
+  confirmedCount,
   onSaved,
   onClose,
 }: ReminderModalProps) {
   const [daysBefore, setDaysBefore] = useState<number | null>(slam.reminder_days_before ?? null)
+  const [daysInput, setDaysInput] = useState(slam.reminder_days_before ? String(slam.reminder_days_before) : '')
   const [reminderMessage, setReminderMessage] = useState(slam.reminder_message ?? '')
-  const [skipOrganizerMessage, setSkipOrganizerMessage] = useState(false)
+  const [skipOrganizerMessage, setSkipOrganizerMessage] = useState(slam.reminder_skip_organizer_message ?? false)
   const [saving, setSaving] = useState(false)
   const [showPreview, setShowPreview] = useState(false)
+  const [sendingNow, setSendingNow] = useState(false)
+  const [confirmSendNow, setConfirmSendNow] = useState(false)
+
+  const alreadySent = !!slam.reminder_sent_at
+
+  const handleDaysInput = (val: string) => {
+    setDaysInput(val)
+    const n = parseInt(val, 10)
+    if (val === '' || val === '0') {
+      setDaysBefore(null)
+    } else if (!isNaN(n) && n >= 1 && n <= 30) {
+      setDaysBefore(n)
+    }
+  }
 
   const handleSave = async () => {
     setSaving(true)
@@ -107,13 +124,45 @@ export default function ReminderModal({
         }),
       })
       if (!res.ok) throw new Error()
-      onSaved({ reminder_days_before: daysBefore, reminder_message: reminderMessage.trim() || null, reminder_sent_at: null } as Partial<Slam>)
+      onSaved({
+        reminder_days_before: daysBefore,
+        reminder_message: reminderMessage.trim() || null,
+        reminder_skip_organizer_message: skipOrganizerMessage,
+        reminder_sent_at: null,
+      } as Partial<Slam>)
       toast.success('Przypomnienia skonfigurowane!')
       onClose()
     } catch {
       toast.error('Błąd zapisu')
     } finally {
       setSaving(false)
+    }
+  }
+
+  const handleSendNow = async () => {
+    if (!confirmSendNow) {
+      setConfirmSendNow(true)
+      return
+    }
+    setSendingNow(true)
+    try {
+      const res = await fetch(`/api/dashboard/${organizerToken}/send-reminder-now`, {
+        method: 'POST',
+      })
+      const data = await res.json()
+      if (res.status === 409) {
+        toast.error('Przypomnienie zostało już wysłane.')
+        return
+      }
+      if (!res.ok) throw new Error()
+      onSaved({ reminder_sent_at: new Date().toISOString() } as Partial<Slam>)
+      toast.success(`Wysłano przypomnienia do ${data.sent} uczestników!`)
+      onClose()
+    } catch {
+      toast.error('Błąd wysyłki')
+    } finally {
+      setSendingNow(false)
+      setConfirmSendNow(false)
     }
   }
 
@@ -135,96 +184,84 @@ export default function ReminderModal({
         </div>
 
         <div className="p-5 space-y-5">
-          {/* Kiedy wysłać */}
+
+          {/* SEKCJA A: Automatyczne */}
           <div>
-            <p className="text-xs font-bold text-[#aaa] uppercase tracking-wider mb-3">
-              Kiedy wysłać przypomnienie?
+            <p className="text-xs font-bold text-[#aaa] uppercase tracking-wider mb-1">
+              Wyślij automatycznie przed slamem
             </p>
-            <div className="space-y-2">
-              {([null, 1, 2, 3] as (number | null)[]).map((val) => (
-                <label key={String(val)} className="flex items-center gap-3 cursor-pointer group">
-                  <input
-                    type="radio"
-                    name="days_before"
-                    checked={daysBefore === val}
-                    onChange={() => setDaysBefore(val)}
-                    className="accent-[#c0392b]"
-                  />
-                  <span className="text-sm text-[#aaa] group-hover:text-white transition-colors">
-                    {val === null && 'Nie wysyłaj przypomnień'}
-                    {val === 1 && 'Dzień przed slamem (o 12:00)'}
-                    {val === 2 && '2 dni przed slamem (o 12:00)'}
-                    {val === 3 && '3 dni przed slamem (o 12:00)'}
-                  </span>
-                </label>
-              ))}
+            <p className="text-xs text-[#444] mb-3">
+              Cron wysyła codziennie o 12:00. Wpisz 0 lub zostaw puste żeby wyłączyć.
+            </p>
+            <div className="flex items-center gap-3">
+              <input
+                type="number"
+                min={0}
+                max={30}
+                value={daysInput}
+                onChange={(e) => handleDaysInput(e.target.value)}
+                placeholder="np. 2"
+                className="w-20 bg-[#111] border border-[#2a2a2a] text-[#aaa] text-sm px-3 py-2 focus:outline-none focus:border-[#444] placeholder:text-[#333]"
+              />
+              <span className="text-sm text-[#555]">
+                {daysBefore ? `${daysBefore === 1 ? 'dzień' : 'dni'} przed slamem (o 12:00)` : 'nie wysyłaj automatycznie'}
+              </span>
             </div>
           </div>
 
-          {/* Wiadomość w przypomnieniu */}
-          {daysBefore !== null && (
-            <div className="space-y-3">
-              <div>
-                <label className="block text-xs font-bold text-[#aaa] uppercase tracking-wider mb-1.5">
-                  Wiadomość w przypomnieniu (opcjonalnie)
-                </label>
-                <p className="text-xs text-[#444] mb-2">
-                  Jeśli puste — użyta zostanie wiadomość od organizatora z dashboardu.
-                </p>
-                <textarea
-                  value={reminderMessage}
-                  onChange={(e) => setReminderMessage(e.target.value)}
-                  placeholder="np. Prosimy o przybycie 15 min wcześniej. Wejście od ul. Brackiej."
-                  rows={3}
-                  className="w-full bg-[#111] border border-[#2a2a2a] text-[#aaa] text-sm px-3 py-2 resize-none focus:outline-none focus:border-[#444] placeholder:text-[#3a3a3a]"
-                />
-              </div>
-              <label className="flex items-center gap-2 cursor-pointer group">
-                <input
-                  type="checkbox"
-                  checked={skipOrganizerMessage}
-                  onChange={(e) => setSkipOrganizerMessage(e.target.checked)}
-                  className="w-3.5 h-3.5 accent-[#c0392b]"
-                />
-                <span className="text-xs text-[#555] group-hover:text-[#aaa] transition-colors">
-                  Nie dodawaj wiadomości od organizatora z dashboardu
-                </span>
+          {/* Wiadomość + checkbox */}
+          <div className="space-y-3">
+            <div>
+              <label className="block text-xs font-bold text-[#aaa] uppercase tracking-wider mb-1.5">
+                Wiadomość w przypomnieniu (opcjonalnie)
               </label>
+              <p className="text-xs text-[#444] mb-2">
+                Jeśli puste — użyta zostanie wiadomość od organizatora z dashboardu.
+              </p>
+              <textarea
+                value={reminderMessage}
+                onChange={(e) => setReminderMessage(e.target.value)}
+                placeholder="np. Prosimy o przybycie 15 min wcześniej. Wejście od ul. Brackiej."
+                rows={3}
+                className="w-full bg-[#111] border border-[#2a2a2a] text-[#aaa] text-sm px-3 py-2 resize-none focus:outline-none focus:border-[#444] placeholder:text-[#3a3a3a]"
+              />
             </div>
-          )}
+            <label className="flex items-center gap-2 cursor-pointer group">
+              <input
+                type="checkbox"
+                checked={skipOrganizerMessage}
+                onChange={(e) => setSkipOrganizerMessage(e.target.checked)}
+                className="w-3.5 h-3.5 accent-[#c0392b]"
+              />
+              <span className="text-xs text-[#555] group-hover:text-[#aaa] transition-colors">
+                Nie dodawaj wiadomości od organizatora z dashboardu
+              </span>
+            </label>
+          </div>
 
           {/* Podgląd maila */}
-          {daysBefore !== null && (
-            <div>
-              <button
-                onClick={() => setShowPreview((v) => !v)}
-                className="text-xs text-[#555] hover:text-[#aaa] border border-[#2a2a2a] px-3 py-1.5 transition-colors"
-              >
-                {showPreview ? 'Ukryj podgląd maila' : 'Podgląd maila z przypomnieniem'}
-              </button>
+          <div>
+            <button
+              onClick={() => setShowPreview((v) => !v)}
+              className="text-xs text-[#555] hover:text-[#aaa] border border-[#2a2a2a] px-3 py-1.5 transition-colors"
+            >
+              {showPreview ? 'Ukryj podgląd maila' : 'Podgląd maila z przypomnieniem'}
+            </button>
 
-              {showPreview && (
-                <div className="mt-3 border border-[#2a2a2a] bg-[#0d0d0d] p-4">
-                  <ReminderEmailPreview
-                    slamName={slam.name}
-                    slamDate={formattedDate}
-                    reminderMessage={reminderMessage}
-                    organizerMessage={skipOrganizerMessage ? '' : (slam.organizer_message ?? '')}
-                    organizerEmail={slam.organizer_email ?? undefined}
-                  />
-                </div>
-              )}
-            </div>
-          )}
+            {showPreview && (
+              <div className="mt-3 border border-[#2a2a2a] bg-[#0d0d0d] p-4">
+                <ReminderEmailPreview
+                  slamName={slam.name}
+                  slamDate={formattedDate}
+                  reminderMessage={reminderMessage}
+                  organizerMessage={skipOrganizerMessage ? '' : (slam.organizer_message ?? '')}
+                  organizerEmail={slam.organizer_email ?? undefined}
+                />
+              </div>
+            )}
+          </div>
 
-          {/* Status */}
-          {slam.reminder_sent_at && (
-            <p className="text-xs text-green-500">
-              ✓ Przypomnienie zostało już wysłane ({new Date(slam.reminder_sent_at).toLocaleDateString('pl')})
-            </p>
-          )}
-
-          {/* Przyciski */}
+          {/* Zapis ustawień automatycznych */}
           <div className="flex gap-3 pt-2 border-t border-[#2a2a2a]">
             <button
               onClick={handleSave}
@@ -240,6 +277,71 @@ export default function ReminderModal({
               Anuluj
             </button>
           </div>
+
+          {/* SEKCJA B: Wyślij teraz */}
+          <div className="border-t border-[#2a2a2a] pt-5">
+            <p className="text-xs font-bold text-[#aaa] uppercase tracking-wider mb-1">
+              Wyślij teraz
+            </p>
+
+            {alreadySent ? (
+              <div className="space-y-2">
+                <p className="text-xs text-[#555]">
+                  ✓ Przypomnienie zostało już wysłane{' '}
+                  <span className="text-[#444]">
+                    ({new Date(slam.reminder_sent_at!.replace(' ', 'T')).toLocaleDateString('pl-PL', { day: 'numeric', month: 'long', year: 'numeric' })})
+                  </span>.
+                </p>
+                <p className="text-xs text-[#444]">
+                  Jeśli chcesz wysłać kolejne — napisz bezpośrednio ze swojego maila do uczestników.
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                <p className="text-xs text-[#444]">
+                  Wyśle przypomnienie natychmiast do wszystkich{' '}
+                  <span className="text-[#888]">({confirmedCount} os.)</span>{' '}
+                  z listy głównej. Można wysłać tylko raz.
+                </p>
+
+                {confirmSendNow ? (
+                  <div className="bg-[#111] border border-[#c0392b]/40 p-3 space-y-3">
+                    <p className="text-xs text-[#c0392b] font-bold">
+                      Na pewno? Wyśle maile do {confirmedCount} {confirmedCount === 1 ? 'osoby' : 'osób'} z listy głównej. Tej akcji nie można cofnąć.
+                    </p>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={handleSendNow}
+                        disabled={sendingNow}
+                        className="text-xs text-white bg-[#c0392b] hover:bg-[#a93226] disabled:opacity-50 px-3 py-1.5 font-bold transition-colors"
+                      >
+                        {sendingNow ? 'Wysyłanie...' : 'Tak, wyślij teraz'}
+                      </button>
+                      <button
+                        onClick={() => setConfirmSendNow(false)}
+                        className="text-xs text-[#555] hover:text-[#aaa] border border-[#2a2a2a] px-3 py-1.5 transition-colors"
+                      >
+                        Anuluj
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <button
+                    onClick={handleSendNow}
+                    disabled={confirmedCount === 0}
+                    className="text-xs text-[#c0392b] border border-[#c0392b]/50 hover:bg-[#c0392b]/10 disabled:opacity-30 disabled:cursor-not-allowed px-4 py-2 transition-colors font-bold"
+                  >
+                    Wyślij przypomnienia teraz →
+                  </button>
+                )}
+
+                {confirmedCount === 0 && (
+                  <p className="text-xs text-[#333]">Brak uczestników na liście głównej.</p>
+                )}
+              </div>
+            )}
+          </div>
+
         </div>
       </div>
     </div>
