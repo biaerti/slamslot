@@ -230,8 +230,10 @@ export default function ReminderModal({
                         if (isNaN(eventDate.getTime())) return null
                         const reminderDate = new Date(eventDate)
                         reminderDate.setDate(reminderDate.getDate() - days)
-                        const weekday = reminderDate.toLocaleDateString('pl-PL', { weekday: 'long' })
-                        return `Np. jeśli ustawisz ${days}, a slam jest w ${eventDate.toLocaleDateString('pl-PL', { weekday: 'long' })} → przypomnienie w ${weekday} o 12:00`
+                        const dayNames: Record<number, string> = { 0: 'niedzielę', 1: 'poniedziałek', 2: 'wtorek', 3: 'środę', 4: 'czwartek', 5: 'piątek', 6: 'sobotę' }
+                        const eventDay = dayNames[eventDate.getDay()]
+                        const reminderDay = dayNames[reminderDate.getDay()]
+                        return `Np. jeśli ustawisz ${days}, a slam jest w ${eventDay} → przypomnienie w ${reminderDay} o 12:00`
                       })()}
                     </p>
                   )}
