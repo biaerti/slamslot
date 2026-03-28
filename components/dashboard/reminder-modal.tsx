@@ -90,28 +90,22 @@ export default function ReminderModal({
   onSaved,
   onClose,
 }: ReminderModalProps) {
-  const [daysBefore, setDaysBefore] = useState<number | null>(slam.reminder_days_before ?? null)
-  const [daysInput, setDaysInput] = useState(slam.reminder_days_before ? String(slam.reminder_days_before) : '')
+  const autoEnabled = slam.reminder_days_before != null
+  const [mode, setMode] = useState<'off' | 'auto'>(autoEnabled ? 'auto' : 'off')
+  const [daysInput, setDaysInput] = useState(slam.reminder_days_before ? String(slam.reminder_days_before) : '2')
   const [reminderMessage, setReminderMessage] = useState(slam.reminder_message ?? '')
   const [skipOrganizerMessage, setSkipOrganizerMessage] = useState(slam.reminder_skip_organizer_message ?? false)
   const [saving, setSaving] = useState(false)
   const [showPreview, setShowPreview] = useState(false)
+  const [showSendNowConfirm, setShowSendNowConfirm] = useState(false)
   const [sendingNow, setSendingNow] = useState(false)
-  const [confirmSendNow, setConfirmSendNow] = useState(false)
 
   const alreadySent = !!slam.reminder_sent_at
-
-  const handleDaysInput = (val: string) => {
-    setDaysInput(val)
-    const n = parseInt(val, 10)
-    if (val === '' || val === '0') {
-      setDaysBefore(null)
-    } else if (!isNaN(n) && n >= 1 && n <= 30) {
-      setDaysBefore(n)
-    }
-  }
+  const days = parseInt(daysInput, 10)
+  const daysValid = !isNaN(days) && days >= 1 && days <= 30
 
   const handleSave = async () => {
+    const daysBefore = mode === 'auto' && daysValid ? days : null
     setSaving(true)
     try {
       const res = await fetch(`/api/dashboard/${organizerToken}/set-reminder`, {
@@ -140,10 +134,6 @@ export default function ReminderModal({
   }
 
   const handleSendNow = async () => {
-    if (!confirmSendNow) {
-      setConfirmSendNow(true)
-      return
-    }
     setSendingNow(true)
     try {
       const res = await fetch(`/api/dashboard/${organizerToken}/send-reminder-now`, {
@@ -152,6 +142,7 @@ export default function ReminderModal({
       const data = await res.json()
       if (res.status === 409) {
         toast.error('Przypomnienie zostało już wysłane.')
+        setShowSendNowConfirm(false)
         return
       }
       if (!res.ok) throw new Error()
@@ -162,7 +153,7 @@ export default function ReminderModal({
       toast.error('Błąd wysyłki')
     } finally {
       setSendingNow(false)
-      setConfirmSendNow(false)
+      setShowSendNowConfirm(false)
     }
   }
 
@@ -185,27 +176,67 @@ export default function ReminderModal({
 
         <div className="p-5 space-y-5">
 
-          {/* SEKCJA A: Automatyczne */}
+          {/* SEKCJA A: Automatyczne — radio */}
           <div>
-            <p className="text-xs font-bold text-[#aaa] uppercase tracking-wider mb-1">
-              Wyślij automatycznie przed slamem
+            <p className="text-xs font-bold text-[#aaa] uppercase tracking-wider mb-3">
+              Automatyczne przypomnienie
             </p>
-            <p className="text-xs text-[#444] mb-3">
-              Cron wysyła codziennie o 12:00. Wpisz 0 lub zostaw puste żeby wyłączyć.
-            </p>
-            <div className="flex items-center gap-3">
-              <input
-                type="number"
-                min={0}
-                max={30}
-                value={daysInput}
-                onChange={(e) => handleDaysInput(e.target.value)}
-                placeholder="np. 2"
-                className="w-20 bg-[#111] border border-[#2a2a2a] text-[#aaa] text-sm px-3 py-2 focus:outline-none focus:border-[#444] placeholder:text-[#333]"
-              />
-              <span className="text-sm text-[#555]">
-                {daysBefore ? `${daysBefore === 1 ? 'dzień' : 'dni'} przed slamem (o 12:00)` : 'nie wysyłaj automatycznie'}
-              </span>
+            <div className="space-y-2">
+              <label className="flex items-center gap-3 cursor-pointer group">
+                <input
+                  type="radio"
+                  name="reminder_mode"
+                  checked={mode === 'off'}
+                  onChange={() => setMode('off')}
+                  className="accent-[#c0392b]"
+                />
+                <span className="text-sm text-[#aaa] group-hover:text-white transition-colors">
+                  Nie wysyłaj automatycznie
+                </span>
+              </label>
+              <label className="flex items-start gap-3 cursor-pointer group">
+                <input
+                  type="radio"
+                  name="reminder_mode"
+                  checked={mode === 'auto'}
+                  onChange={() => setMode('auto')}
+                  className="accent-[#c0392b] mt-0.5"
+                />
+                <div className="space-y-1.5">
+                  <span className="text-sm text-[#aaa] group-hover:text-white transition-colors">
+                    Wyślij automatycznie
+                  </span>
+                  {mode === 'auto' && (
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <input
+                        type="number"
+                        min={1}
+                        max={30}
+                        value={daysInput}
+                        onChange={(e) => setDaysInput(e.target.value)}
+                        className="w-16 bg-[#111] border border-[#2a2a2a] text-[#aaa] text-sm px-2 py-1 focus:outline-none focus:border-[#444]"
+                      />
+                      <span className="text-sm text-[#555]">
+                        {daysValid && days === 1 ? 'dzień przed slamem (o 12:00)' : 'dni przed slamem (o 12:00)'}
+                      </span>
+                    </div>
+                  )}
+                  {mode === 'auto' && daysValid && (
+                    <p className="text-xs text-[#444]">
+                      Np. jeśli slam jest w sobotę o 18:00, a ustawisz {days} — przypomnienie wyśle się w{' '}
+                      {(() => {
+                        const eventDate = new Date(slam.event_date.replace(' ', 'T'))
+                        const reminderDate = new Date(eventDate)
+                        reminderDate.setDate(reminderDate.getDate() - days)
+                        return isNaN(reminderDate.getTime())
+                          ? `${days === 1 ? 'przeddzień' : `${days} dni wcześniej`}`
+                          : reminderDate.toLocaleDateString('pl-PL', { weekday: 'long', day: 'numeric', month: 'long' }) + ' o 12:00'
+                      })()}
+                      .
+                    </p>
+                  )}
+                </div>
+              </label>
             </div>
           </div>
 
@@ -261,11 +292,11 @@ export default function ReminderModal({
             )}
           </div>
 
-          {/* Zapis ustawień automatycznych */}
+          {/* Zapis ustawień */}
           <div className="flex gap-3 pt-2 border-t border-[#2a2a2a]">
             <button
               onClick={handleSave}
-              disabled={saving}
+              disabled={saving || (mode === 'auto' && !daysValid)}
               className="text-xs text-white bg-[#c0392b] hover:bg-[#a93226] disabled:opacity-50 px-4 py-2 transition-colors font-bold"
             >
               {saving ? 'Zapisywanie...' : 'Zapisz ustawienia'}
@@ -296,45 +327,44 @@ export default function ReminderModal({
                   Jeśli chcesz wysłać kolejne — napisz bezpośrednio ze swojego maila do uczestników.
                 </p>
               </div>
-            ) : (
-              <div className="space-y-3">
-                <p className="text-xs text-[#444]">
-                  Wyśle przypomnienie natychmiast do wszystkich{' '}
-                  <span className="text-[#888]">({confirmedCount} os.)</span>{' '}
-                  z listy głównej. Można wysłać tylko raz.
+            ) : showSendNowConfirm ? (
+              <div className="bg-[#111] border border-[#c0392b]/40 p-4 space-y-3">
+                <p className="text-sm text-white font-bold">
+                  Wysłać przypomnienia do {confirmedCount} {confirmedCount === 1 ? 'osoby' : 'osób'} z listy głównej?
                 </p>
-
-                {confirmSendNow ? (
-                  <div className="bg-[#111] border border-[#c0392b]/40 p-3 space-y-3">
-                    <p className="text-xs text-[#c0392b] font-bold">
-                      Na pewno? Wyśle maile do {confirmedCount} {confirmedCount === 1 ? 'osoby' : 'osób'} z listy głównej. Tej akcji nie można cofnąć.
-                    </p>
-                    <div className="flex gap-2">
-                      <button
-                        onClick={handleSendNow}
-                        disabled={sendingNow}
-                        className="text-xs text-white bg-[#c0392b] hover:bg-[#a93226] disabled:opacity-50 px-3 py-1.5 font-bold transition-colors"
-                      >
-                        {sendingNow ? 'Wysyłanie...' : 'Tak, wyślij teraz'}
-                      </button>
-                      <button
-                        onClick={() => setConfirmSendNow(false)}
-                        className="text-xs text-[#555] hover:text-[#aaa] border border-[#2a2a2a] px-3 py-1.5 transition-colors"
-                      >
-                        Anuluj
-                      </button>
-                    </div>
-                  </div>
-                ) : (
+                <p className="text-xs text-[#888]">
+                  Maile zostaną wysłane natychmiast. Tej akcji nie można cofnąć — przypomnienia można wysłać tylko raz, więc automatyczne (jeśli ustawione) już się nie wyślą.
+                </p>
+                <div className="flex gap-2">
                   <button
                     onClick={handleSendNow}
-                    disabled={confirmedCount === 0}
-                    className="text-xs text-[#c0392b] border border-[#c0392b]/50 hover:bg-[#c0392b]/10 disabled:opacity-30 disabled:cursor-not-allowed px-4 py-2 transition-colors font-bold"
+                    disabled={sendingNow}
+                    className="text-xs text-white bg-[#c0392b] hover:bg-[#a93226] disabled:opacity-50 px-3 py-1.5 font-bold transition-colors"
                   >
-                    Wyślij przypomnienia teraz →
+                    {sendingNow ? 'Wysyłanie...' : 'Tak, wyślij teraz'}
                   </button>
-                )}
-
+                  <button
+                    onClick={() => setShowSendNowConfirm(false)}
+                    className="text-xs text-[#555] hover:text-[#aaa] border border-[#2a2a2a] px-3 py-1.5 transition-colors"
+                  >
+                    Anuluj
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                <p className="text-xs text-[#444]">
+                  Wyśle maile natychmiast do wszystkich{' '}
+                  <span className="text-[#888]">({confirmedCount} os.)</span>{' '}
+                  z listy głównej.
+                </p>
+                <button
+                  onClick={() => setShowSendNowConfirm(true)}
+                  disabled={confirmedCount === 0}
+                  className="text-xs text-[#c0392b] border border-[#c0392b]/50 hover:bg-[#c0392b]/10 disabled:opacity-30 disabled:cursor-not-allowed px-4 py-2 transition-colors font-bold"
+                >
+                  Wyślij przypomnienia teraz →
+                </button>
                 {confirmedCount === 0 && (
                   <p className="text-xs text-[#333]">Brak uczestników na liście głównej.</p>
                 )}

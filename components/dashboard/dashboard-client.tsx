@@ -10,6 +10,7 @@ import { DashboardPasswordGate } from './dashboard-password-gate'
 import EmailPreviewModal from './email-preview-modal'
 import EditSlamModal from './edit-slam-section'
 import ReminderModal from './reminder-modal'
+import SetPasswordModal from './set-password-modal'
 
 const DashboardLists = dynamic(() => import('./dashboard-lists'), { ssr: false })
 
@@ -26,6 +27,7 @@ export default function DashboardClient({ data: initialData, organizerToken }: D
   const [showPreview, setShowPreview] = useState(false)
   const [showEdit, setShowEdit] = useState(false)
   const [showReminder, setShowReminder] = useState(false)
+  const [showSetPassword, setShowSetPassword] = useState(false)
 
   const refresh = useCallback(async () => {
     const res = await fetch(`/api/dashboard/${organizerToken}`)
@@ -75,12 +77,20 @@ export default function DashboardClient({ data: initialData, organizerToken }: D
       {/* Header */}
       <header className="border-b border-[#2a2a2a] px-6 py-4 flex items-center justify-between">
         <p className="font-display text-2xl tracking-widest text-white">SLAMSLOT</p>
-        <button
-          onClick={refresh}
-          className="text-[#555] hover:text-[#aaa] text-sm transition-colors"
-        >
-          Odśwież
-        </button>
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => setShowSetPassword(true)}
+            className="text-[#555] hover:text-[#aaa] text-sm transition-colors"
+          >
+            {data.slam.dashboard_password_hash ? 'Zmień hasło' : 'Ustaw hasło'}
+          </button>
+          <button
+            onClick={refresh}
+            className="text-[#555] hover:text-[#aaa] text-sm transition-colors"
+          >
+            Odśwież
+          </button>
+        </div>
       </header>
 
       {/* Slam info */}
@@ -142,6 +152,15 @@ export default function DashboardClient({ data: initialData, organizerToken }: D
           organizerToken={organizerToken}
           onSaved={(updated) => setData((d) => ({ ...d, slam: { ...d.slam, ...updated } }))}
           onClose={() => setShowEdit(false)}
+        />
+      )}
+
+      {showSetPassword && (
+        <SetPasswordModal
+          organizerToken={organizerToken}
+          hasPassword={!!data.slam.dashboard_password_hash}
+          onSaved={() => setData((d) => ({ ...d, slam: { ...d.slam, dashboard_password_hash: 'set' } }))}
+          onClose={() => setShowSetPassword(false)}
         />
       )}
 
