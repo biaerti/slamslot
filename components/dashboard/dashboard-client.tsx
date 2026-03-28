@@ -144,9 +144,17 @@ export default function DashboardClient({ data: initialData, organizerToken }: D
               <p className="text-[#888] text-sm mt-1">{formattedDate}</p>
             </div>
             <div className="flex items-center gap-6 text-center">
-              <div>
+              <div className="relative">
                 <p className="font-display text-3xl text-white">{totalConfirmed}</p>
                 <p className="text-xs text-[#888] uppercase tracking-wider">Lista główna</p>
+                {spotsLeft < 0 && (
+                  <span
+                    title={`Przekroczona liczba miejsc o ${Math.abs(spotsLeft)} — ustawione max to ${data.slam.max_participants}`}
+                    className="absolute -top-1 -right-4 text-yellow-400 text-base leading-none cursor-default"
+                  >
+                    ⚠
+                  </span>
+                )}
               </div>
               <div className="w-px h-10 bg-[#2a2a2a]" />
               <div>
