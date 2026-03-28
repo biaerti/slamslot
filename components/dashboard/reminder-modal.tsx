@@ -194,19 +194,21 @@ export default function ReminderModal({
                   Nie wysyłaj automatycznie
                 </span>
               </label>
-              <label className="flex items-start gap-3 cursor-pointer group">
+              <label className={`flex items-start gap-3 ${alreadySent ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer group'}`}>
                 <input
                   type="radio"
                   name="reminder_mode"
                   checked={mode === 'auto'}
-                  onChange={() => setMode('auto')}
+                  onChange={() => !alreadySent && setMode('auto')}
+                  disabled={alreadySent}
                   className="accent-[#c0392b] mt-0.5"
                 />
                 <div className="space-y-1.5">
                   <span className="text-sm text-[#aaa] group-hover:text-white transition-colors">
                     Wyślij automatycznie
+                    {alreadySent && <span className="ml-2 text-xs text-[#444]">(już wysłano)</span>}
                   </span>
-                  {mode === 'auto' && (
+                  {mode === 'auto' && !alreadySent && (
                     <div className="flex items-center gap-2 flex-wrap">
                       <input
                         type="number"
@@ -221,18 +223,16 @@ export default function ReminderModal({
                       </span>
                     </div>
                   )}
-                  {mode === 'auto' && daysValid && (
+                  {mode === 'auto' && daysValid && !alreadySent && (
                     <p className="text-xs text-[#444]">
-                      Np. jeśli slam jest w sobotę o 18:00, a ustawisz {days} — przypomnienie wyśle się w{' '}
                       {(() => {
                         const eventDate = new Date(slam.event_date.replace(' ', 'T'))
+                        if (isNaN(eventDate.getTime())) return null
                         const reminderDate = new Date(eventDate)
                         reminderDate.setDate(reminderDate.getDate() - days)
-                        return isNaN(reminderDate.getTime())
-                          ? `${days === 1 ? 'przeddzień' : `${days} dni wcześniej`}`
-                          : reminderDate.toLocaleDateString('pl-PL', { weekday: 'long', day: 'numeric', month: 'long' }) + ' o 12:00'
+                        const weekday = reminderDate.toLocaleDateString('pl-PL', { weekday: 'long' })
+                        return `Np. slam w ${eventDate.toLocaleDateString('pl-PL', { weekday: 'long' })} → przypomnienie w ${weekday} o 12:00`
                       })()}
-                      .
                     </p>
                   )}
                 </div>
