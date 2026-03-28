@@ -57,6 +57,12 @@ export default function WaitlistEmail({
               <strong>Pozycja na liście rez.:</strong> #{position}
             </Text>
           </Section>
+          {organizerMessage && (
+            <Section style={organizerBox}>
+              <Text style={organizerLabel}>Od organizatora:</Text>
+              <Text style={organizerText}>{organizerMessage}</Text>
+            </Section>
+          )}
           <Text style={text}>
             Sprawdzaj swoją aktualną pozycję klikając poniższy przycisk.
             Jeśli zwolni się miejsce, przesuniemy Cię automatycznie na listę główną
@@ -65,12 +71,6 @@ export default function WaitlistEmail({
           <Button href={checkPositionUrl} style={button}>
             Sprawdź swoją pozycję
           </Button>
-          {organizerMessage && (
-            <Section style={organizerBox}>
-              <Text style={organizerLabel}>Od organizatora:</Text>
-              <Text style={organizerText}>{organizerMessage}</Text>
-            </Section>
-          )}
           <Hr style={hr} />
           <Text style={footer}>Trzymaj się — może się uda!</Text>
         </Container>
