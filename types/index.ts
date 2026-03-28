@@ -33,6 +33,7 @@ export interface Registration {
   waitlist_check_token: string
   cancel_token: string | null
   cancelled_by: 'manual' | 'email_link' | null
+  attendance_confirmed: boolean | null
   registered_at: string
 }
 

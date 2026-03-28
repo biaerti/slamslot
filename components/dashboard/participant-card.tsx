@@ -60,6 +60,14 @@ export function ParticipantCard({
             <Badge variant={isConfirmed ? 'confirmed' : 'waiting'}>
               {isConfirmed ? 'Potwierdzony' : 'Rezerwowy'}
             </Badge>
+            {registration.attendance_confirmed && (
+              <span
+                title="Uczestnik potwierdził uczestnictwo przez link w mailu z przypomnieniem"
+                className="text-green-400 text-xs leading-none cursor-default"
+              >
+                ✓
+              </span>
+            )}
           </div>
           <p className="text-[#888] text-xs mt-1 truncate">{registration.email}</p>
           {registration.phone && (
