@@ -56,6 +56,10 @@ export default function RegisteredContent() {
                 <span className="text-[#c0392b]">→</span>
                 Sprawdź skrzynkę email — wysłaliśmy potwierdzenie
               </li>
+              <li className="flex gap-2">
+                <span className="text-[#555]">→</span>
+                <span className="text-[#666]">Nie ma maila? Sprawdź folder spam</span>
+              </li>
               {!isConfirmed && (
                 <li className="flex gap-2">
                   <span className="text-yellow-500">→</span>

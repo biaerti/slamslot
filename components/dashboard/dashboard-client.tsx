@@ -106,23 +106,12 @@ export default function DashboardClient({ data: initialData, organizerToken }: D
       <header className="border-b border-[#2a2a2a] px-6 py-4 flex items-center justify-between">
         <p className="font-display text-2xl tracking-widest text-white">SLAMSLOT</p>
         <div className="flex items-center gap-4">
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => setShowSetPassword(true)}
-              className="text-[#555] hover:text-[#aaa] text-sm transition-colors"
-            >
-              {data.slam.dashboard_password_hash ? 'Zmień hasło' : 'Ustaw hasło'}
-            </button>
-            {data.slam.dashboard_password_hash && (
-              <button
-                onClick={handleResetPassword}
-                disabled={resetSending || resetSent}
-                className="text-xs text-[#3a3a3a] hover:text-[#555] disabled:opacity-50 transition-colors"
-              >
-                {resetSent ? '✓ Link wysłany' : resetSending ? 'Wysyłam...' : 'Nie pamiętam hasła'}
-              </button>
-            )}
-          </div>
+          <button
+            onClick={() => setShowSetPassword(true)}
+            className="text-[#555] hover:text-[#aaa] text-sm transition-colors"
+          >
+            {data.slam.dashboard_password_hash ? 'Zmień hasło' : 'Ustaw hasło'}
+          </button>
           <button
             onClick={refresh}
             className="text-[#555] hover:text-[#aaa] text-sm transition-colors"
