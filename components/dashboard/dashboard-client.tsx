@@ -11,6 +11,7 @@ import EmailPreviewModal from './email-preview-modal'
 import EditSlamModal from './edit-slam-section'
 import ReminderModal from './reminder-modal'
 import SetPasswordModal from './set-password-modal'
+import ExportModal from './export-modal'
 
 const DashboardLists = dynamic(() => import('./dashboard-lists'), { ssr: false })
 
@@ -28,6 +29,7 @@ export default function DashboardClient({ data: initialData, organizerToken }: D
   const [showEdit, setShowEdit] = useState(false)
   const [showReminder, setShowReminder] = useState(false)
   const [showSetPassword, setShowSetPassword] = useState(false)
+  const [showExport, setShowExport] = useState(false)
   const [resetSent, setResetSent] = useState(false)
   const [resetSending, setResetSending] = useState(false)
 
@@ -92,28 +94,6 @@ export default function DashboardClient({ data: initialData, organizerToken }: D
     toast.success('Link skopiowany!')
   }
 
-  const exportCSV = () => {
-    const rows = [
-      ['Pozycja', 'Imię / pseudonim', 'Email', 'Telefon', 'Notatka', 'Status', 'Data zapisu'],
-      ...[...data.confirmed, ...data.waiting].map((r) => [
-        r.position,
-        r.name,
-        r.email,
-        r.phone ?? '',
-        r.note ?? '',
-        r.status === 'confirmed' ? 'Lista główna' : 'Rezerwowa',
-        new Date(r.registered_at).toLocaleString('pl-PL'),
-      ]),
-    ]
-    const csv = rows.map((row) => row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(',')).join('\n')
-    const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `${data.slam.name} — uczestnicy.csv`
-    a.click()
-    URL.revokeObjectURL(url)
-  }
 
   const dateObj = new Date(data.slam.event_date.replace(' ', 'T'))
   const formattedDate = isNaN(dateObj.getTime())
@@ -202,7 +182,7 @@ export default function DashboardClient({ data: initialData, organizerToken }: D
                 : 'Skonfiguruj przypomnienia'}
             </button>
             <button
-              onClick={exportCSV}
+              onClick={() => setShowExport(true)}
               className="text-xs text-[#555] hover:text-[#aaa] border border-[#2a2a2a] px-3 py-1.5 transition-colors"
             >
               Eksportuj listę
@@ -227,6 +207,14 @@ export default function DashboardClient({ data: initialData, organizerToken }: D
           onSaved={() => setData((d) => ({ ...d, slam: { ...d.slam, dashboard_password_hash: 'set' } }))}
           onRemoved={() => setData((d) => ({ ...d, slam: { ...d.slam, dashboard_password_hash: null } }))}
           onClose={() => setShowSetPassword(false)}
+        />
+      )}
+
+      {showExport && (
+        <ExportModal
+          data={data}
+          formattedDate={formattedDate}
+          onClose={() => setShowExport(false)}
         />
       )}
 
