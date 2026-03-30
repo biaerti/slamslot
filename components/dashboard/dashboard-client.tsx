@@ -92,6 +92,29 @@ export default function DashboardClient({ data: initialData, organizerToken }: D
     toast.success('Link skopiowany!')
   }
 
+  const exportCSV = () => {
+    const rows = [
+      ['Pozycja', 'Imię / pseudonim', 'Email', 'Telefon', 'Notatka', 'Status', 'Data zapisu'],
+      ...[...data.confirmed, ...data.waiting].map((r) => [
+        r.position,
+        r.name,
+        r.email,
+        r.phone ?? '',
+        r.note ?? '',
+        r.status === 'confirmed' ? 'Lista główna' : 'Rezerwowa',
+        new Date(r.registered_at).toLocaleString('pl-PL'),
+      ]),
+    ]
+    const csv = rows.map((row) => row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(',')).join('\n')
+    const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `${data.slam.name} — uczestnicy.csv`
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
   const dateObj = new Date(data.slam.event_date.replace(' ', 'T'))
   const formattedDate = isNaN(dateObj.getTime())
     ? data.slam.event_date
@@ -177,6 +200,12 @@ export default function DashboardClient({ data: initialData, organizerToken }: D
               {data.slam.reminder_days_before
                 ? `Przypomnienia: ${data.slam.reminder_days_before} ${data.slam.reminder_days_before === 1 ? 'dzień przed' : 'dni przed'}`
                 : 'Skonfiguruj przypomnienia'}
+            </button>
+            <button
+              onClick={exportCSV}
+              className="text-xs text-[#555] hover:text-[#aaa] border border-[#2a2a2a] px-3 py-1.5 transition-colors"
+            >
+              Eksportuj listę
             </button>
           </div>
         </div>
