@@ -298,8 +298,8 @@ export default function CreateSlamForm() {
       <div className="flex flex-col sm:flex-row gap-4">
         <div className="flex-1">
           <Textarea
-            label="Opis"
-            placeholder="Opis wydarzenia — pojawi się na stronie zapisu dla uczestników..."
+            label="Opis wydarzenia"
+            placeholder="Opis — pojawi się na stronie zapisów dla uczestników..."
             rows={1}
             value={form.description}
             onChange={(e) => setForm({ ...form, description: e.target.value })}
@@ -309,7 +309,7 @@ export default function CreateSlamForm() {
           <Input
             label="Link do eventu na FB"
             type="url"
-            placeholder="fb.com/events/..."
+            placeholder="https://facebook.com/events/..."
             value={form.fb_event_url}
             onChange={(e) => setForm({ ...form, fb_event_url: e.target.value })}
           />
