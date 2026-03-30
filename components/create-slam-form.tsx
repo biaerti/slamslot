@@ -5,6 +5,31 @@ import { Input, Textarea } from './ui/input'
 import { Button } from './ui/button'
 import { toast } from 'sonner'
 
+type ContactMode = 'auto' | 'personal'
+
+const MODE_INFO: Record<ContactMode, { title: string; desc: string; details: string[] }> = {
+  auto: {
+    title: 'Pełna automatyzacja',
+    desc: 'System wysyła maile do uczestników automatycznie.',
+    details: [
+      'Potwierdzenie zapisu od razu po rejestracji',
+      'Info o awansie z listy rezerwowej',
+      'Opcjonalne przypomnienie przed slamem',
+      'Uczestnicy mogą sprawdzić swoją pozycję na liście',
+    ],
+  },
+  personal: {
+    title: 'Bliski kontakt',
+    desc: 'Żadnych automatycznych maili — Ty kontaktujesz się z uczestnikami osobiście.',
+    details: [
+      'Brak maili od zapisy@slamslot.pl',
+      'Uczestnicy widzą tylko potwierdzenie że formularz się przyjął',
+      'Ty widzisz listę i możesz zarządzać nią z dashboardu',
+      'Możesz samodzielnie zaznaczyć że skontaktowałeś się z daną osobą',
+    ],
+  },
+}
+
 export default function CreateSlamForm() {
   const [form, setForm] = useState({
     organizer_name: '',
@@ -17,6 +42,7 @@ export default function CreateSlamForm() {
     organizer_email: '',
     image_url: '',
     show_spots: true,
+    contact_mode: 'auto' as ContactMode,
   })
   const [imageFile, setImageFile] = useState<File | null>(null)
   const [imagePreview, setImagePreview] = useState<string | null>(null)
@@ -32,6 +58,7 @@ export default function CreateSlamForm() {
   const [passwordSaved, setPasswordSaved] = useState(false)
   const [passwordLoading, setPasswordLoading] = useState(false)
   const [copied, setCopied] = useState<'public' | 'dashboard' | null>(null)
+  const [showModeInfo, setShowModeInfo] = useState(false)
 
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -152,35 +179,35 @@ export default function CreateSlamForm() {
           </div>
         </div>
 
-          <div className="bg-[#141414] border border-[#2a2a2a] p-4">
-            <p className="text-xs font-bold text-[#aaa] uppercase tracking-wider mb-1">
-              Hasło do dashboardu (opcjonalnie)
-            </p>
-            <p className="text-[#555] text-xs mb-3">
-              Ustaw hasło jeśli chcesz zabezpieczyć dostęp do dashboardu.
-            </p>
-            {passwordSaved ? (
-              <p className="text-green-500 text-sm font-semibold">✓ Hasło ustawione</p>
-            ) : (
-              <div className="flex gap-2">
-                <input
-                  type="password"
-                  placeholder="Min. 4 znaki"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="flex-1 bg-[#1a1a1a] border border-[#2a2a2a] text-[#f0f0f0] placeholder-[#555] px-3 py-2 text-sm focus:outline-none focus:border-[#c0392b] transition-colors"
-                  autoComplete="new-password"
-                />
-                <button
-                  onClick={handleSetPassword}
-                  disabled={passwordLoading || password.length < 4}
-                  className="px-4 py-2 bg-[#2a2a2a] hover:bg-[#3a3a3a] text-white text-sm font-bold transition-colors disabled:opacity-40"
-                >
-                  {passwordLoading ? '...' : 'Ustaw'}
-                </button>
-              </div>
-            )}
-          </div>
+        <div className="bg-[#141414] border border-[#2a2a2a] p-4">
+          <p className="text-xs font-bold text-[#aaa] uppercase tracking-wider mb-1">
+            Hasło do dashboardu
+          </p>
+          <p className="text-[#555] text-xs mb-3">
+            Ustaw hasło jeśli chcesz zabezpieczyć dostęp do dashboardu.
+          </p>
+          {passwordSaved ? (
+            <p className="text-green-500 text-sm font-semibold">✓ Hasło ustawione</p>
+          ) : (
+            <div className="flex gap-2">
+              <input
+                type="password"
+                placeholder="Min. 4 znaki"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="flex-1 bg-[#1a1a1a] border border-[#2a2a2a] text-[#f0f0f0] placeholder-[#555] px-3 py-2 text-sm focus:outline-none focus:border-[#c0392b] transition-colors"
+                autoComplete="new-password"
+              />
+              <button
+                onClick={handleSetPassword}
+                disabled={passwordLoading || password.length < 4}
+                className="px-4 py-2 bg-[#2a2a2a] hover:bg-[#3a3a3a] text-white text-sm font-bold transition-colors disabled:opacity-40"
+              >
+                {passwordLoading ? '...' : 'Ustaw'}
+              </button>
+            </div>
+          )}
+        </div>
 
         <Button
           variant="ghost"
@@ -193,40 +220,100 @@ export default function CreateSlamForm() {
     )
   }
 
+  const activeMode = MODE_INFO[form.contact_mode]
+
   return (
     <form onSubmit={handleSubmit} className="space-y-2">
       <Input
-        label="Nazwa organizatora / kolektywu"
+        label="Nazwa organizatora / kolektywu *"
         placeholder="np. SlamSlot"
         value={form.organizer_name}
         onChange={(e) => setForm({ ...form, organizer_name: e.target.value })}
         required
       />
       <Input
-        label="Nazwa slamu"
+        label="Nazwa slamu *"
         placeholder="np. Slam w Pubie Slot #15"
         value={form.name}
         onChange={(e) => setForm({ ...form, name: e.target.value })}
         required
       />
       <Textarea
-        label="Opis (opcjonalnie)"
+        label="Opis"
         placeholder="Opis wydarzenia — pojawi się na stronie zapisu dla uczestników..."
         rows={1}
         value={form.description}
         onChange={(e) => setForm({ ...form, description: e.target.value })}
       />
       <Input
-        label="Link do wydarzenia na FB (opcjonalnie)"
+        label="Link do wydarzenia na FB"
         type="url"
         placeholder="https://facebook.com/events/..."
         value={form.fb_event_url}
         onChange={(e) => setForm({ ...form, fb_event_url: e.target.value })}
       />
+
+      {/* Tryb kontaktu */}
+      <div className="w-full pt-1">
+        <div className="flex items-center gap-2 mb-2">
+          <label className="block text-xs font-semibold text-[#aaa] uppercase tracking-wider">
+            Tryb kontaktu z uczestnikami
+          </label>
+          <button
+            type="button"
+            onClick={() => setShowModeInfo((v) => !v)}
+            className="text-[#444] hover:text-[#888] transition-colors text-xs leading-none"
+          >
+            ?
+          </button>
+        </div>
+
+        <div className="grid grid-cols-2 gap-2">
+          {(['auto', 'personal'] as ContactMode[]).map((mode) => (
+            <button
+              key={mode}
+              type="button"
+              onClick={() => { setForm((f) => ({ ...f, contact_mode: mode })); setShowModeInfo(false) }}
+              className={`text-left px-4 py-3 border transition-colors ${
+                form.contact_mode === mode
+                  ? 'border-[#c0392b] bg-[#c0392b]/10 text-white'
+                  : 'border-[#2a2a2a] bg-[#111] text-[#555] hover:border-[#444] hover:text-[#aaa]'
+              }`}
+            >
+              <p className="text-sm font-bold leading-tight">{MODE_INFO[mode].title}</p>
+              <p className="text-xs mt-0.5 opacity-70 leading-snug">{MODE_INFO[mode].desc}</p>
+            </button>
+          ))}
+        </div>
+
+        {showModeInfo && (
+          <div className="mt-2 border border-[#2a2a2a] bg-[#0d0d0d] p-4 grid grid-cols-2 gap-4">
+            {(['auto', 'personal'] as ContactMode[]).map((mode) => (
+              <div key={mode}>
+                <p className={`text-xs font-bold uppercase tracking-wider mb-2 ${mode === form.contact_mode ? 'text-[#c0392b]' : 'text-[#555]'}`}>
+                  {MODE_INFO[mode].title}
+                </p>
+                <ul className="space-y-1">
+                  {MODE_INFO[mode].details.map((d, i) => (
+                    <li key={i} className="flex gap-1.5 text-xs text-[#666]">
+                      <span className="text-[#c0392b] shrink-0">■</span>
+                      {d}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+            <p className="col-span-2 text-xs text-[#444] pt-2 border-t border-[#1a1a1a]">
+              Trybu nie można zmienić po utworzeniu slamu.
+            </p>
+          </div>
+        )}
+      </div>
+
       <div className="flex flex-col sm:flex-row gap-4">
         <div className="flex-1">
           <Input
-            label="Data i godzina"
+            label="Data i godzina *"
             type="datetime-local"
             value={form.event_date}
             min="2020-01-01T00:00"
@@ -237,7 +324,7 @@ export default function CreateSlamForm() {
         </div>
         <div className="sm:w-52 flex flex-col gap-1">
           <Input
-            label="Liczba miejsc"
+            label="Liczba miejsc *"
             type="number"
             min={1}
             max={500}
@@ -289,7 +376,7 @@ export default function CreateSlamForm() {
       <div className="w-full">
         <div className="flex items-baseline gap-2 mb-1.5">
           <label className="block text-xs font-semibold text-[#aaa] uppercase tracking-wider">
-            Zdjęcie / logo wydarzenia (opcjonalnie)
+            Zdjęcie / logo wydarzenia
           </label>
           <span className="text-xs text-[#555]">sugerowany format 1:1</span>
         </div>
