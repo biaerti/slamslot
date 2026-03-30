@@ -298,8 +298,8 @@ export default function CreateSlamForm() {
       <div className="flex flex-col sm:flex-row gap-4">
         <div className="flex-1">
           <Textarea
-            label="Opis wydarzenia"
-            placeholder="Opis - pojawi się na stronie zapisów..."
+            label="Opis"
+            placeholder="Opis wydarzenia - pojawi się na stronie zapisów..."
             rows={1}
             value={form.description}
             onChange={(e) => setForm({ ...form, description: e.target.value })}
