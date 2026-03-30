@@ -15,9 +15,16 @@ export default function ExportModal({ data, formattedDate, onClose }: ExportModa
   const [exporting, setExporting] = useState<'csv' | 'xlsx' | 'pdf' | null>(null)
 
   const rows = [
-    ...data.confirmed.map((r) => ({ ...r, listStatus: 'Lista główna' })),
-    ...data.waiting.map((r) => ({ ...r, listStatus: 'Rezerwowa' })),
+    ...data.confirmed.map((r) => ({ ...r, listStatus: 'Lista główna', listStatusPDF: 'Glowna' })),
+    ...data.waiting.map((r) => ({ ...r, listStatus: 'Rezerwowa', listStatusPDF: 'Rezerwa' })),
   ]
+
+  // jsPDF + helvetica nie obsługuje polskich znaków — transliteracja
+  const pl2ascii = (s: string) =>
+    s.replace(/ą/g,'a').replace(/ć/g,'c').replace(/ę/g,'e').replace(/ł/g,'l')
+     .replace(/ń/g,'n').replace(/ó/g,'o').replace(/ś/g,'s').replace(/ź/g,'z').replace(/ż/g,'z')
+     .replace(/Ą/g,'A').replace(/Ć/g,'C').replace(/Ę/g,'E').replace(/Ł/g,'L')
+     .replace(/Ń/g,'N').replace(/Ó/g,'O').replace(/Ś/g,'S').replace(/Ź/g,'Z').replace(/Ż/g,'Z')
 
   const handleCSV = () => {
     setExporting('csv')
@@ -81,14 +88,14 @@ export default function ExportModal({ data, formattedDate, onClose }: ExportModa
     doc.setFont('helvetica', 'bold')
     doc.setFontSize(22)
     doc.setTextColor(255, 255, 255)
-    doc.text(data.slam.name.toUpperCase(), 14, 18)
+    doc.text(pl2ascii(data.slam.name.toUpperCase()), 14, 18)
 
     // Data i info
     doc.setFontSize(9)
     doc.setTextColor(136, 136, 136)
     doc.setFont('helvetica', 'normal')
-    doc.text(formattedDate, 14, 25)
-    doc.text(`Lista główna: ${data.confirmed.length} os.   Rezerwowa: ${data.waiting.length} os.`, 14, 30)
+    doc.text(pl2ascii(formattedDate), 14, 25)
+    doc.text(`Lista glowna: ${data.confirmed.length} os.   Rezerwa: ${data.waiting.length} os.`, 14, 30)
 
     // Logo tekst
     doc.setFontSize(8)
@@ -103,13 +110,13 @@ export default function ExportModal({ data, formattedDate, onClose }: ExportModa
     // Tabela
     autoTable(doc, {
       startY: 38,
-      head: [['#', 'Imię / pseudonim', 'Email', 'Telefon', 'Lista']],
+      head: [['#', 'Imie / pseudonim', 'Email', 'Telefon', 'Lista']],
       body: rows.map((r) => [
         r.position,
-        r.name,
+        pl2ascii(r.name),
         r.email,
-        r.phone ?? '—',
-        r.listStatus,
+        r.phone ?? '-',
+        r.listStatusPDF,
       ]),
       styles: {
         font: 'helvetica',
@@ -148,7 +155,7 @@ export default function ExportModal({ data, formattedDate, onClose }: ExportModa
       doc.rect(0, 295, 210, 2, 'F')
       doc.setFontSize(7)
       doc.setTextColor(60, 60, 60)
-      doc.text(`Wygenerowano: ${format(new Date(), 'd MMM yyyy, HH:mm', { locale: pl })}`, 14, 293)
+      doc.text(`Wygenerowano: ${pl2ascii(format(new Date(), 'd MMM yyyy, HH:mm', { locale: pl }))}`, 14, 293)
       doc.text(`${i} / ${pageCount}`, 196, 293, { align: 'right' })
     }
 
