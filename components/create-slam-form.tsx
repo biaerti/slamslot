@@ -238,27 +238,6 @@ export default function CreateSlamForm() {
         onChange={(e) => setForm({ ...form, name: e.target.value })}
         required
       />
-      <div className="flex flex-col sm:flex-row gap-4">
-        <div className="flex-1">
-          <Textarea
-            label="Opis"
-            placeholder="Opis wydarzenia..."
-            rows={1}
-            value={form.description}
-            onChange={(e) => setForm({ ...form, description: e.target.value })}
-          />
-        </div>
-        <div className="sm:w-52">
-          <Input
-            label="Link do eventu na FB"
-            type="url"
-            placeholder="fb.com/events/..."
-            value={form.fb_event_url}
-            onChange={(e) => setForm({ ...form, fb_event_url: e.target.value })}
-          />
-        </div>
-      </div>
-
       {/* Tryb kontaktu */}
       <div className="w-full pt-1">
         <div className="flex items-center gap-2 mb-2">
@@ -316,6 +295,26 @@ export default function CreateSlamForm() {
         )}
       </div>
 
+      <div className="flex flex-col sm:flex-row gap-4">
+        <div className="flex-1">
+          <Textarea
+            label="Opis"
+            placeholder="Opis wydarzenia — pojawi się na stronie zapisu dla uczestników..."
+            rows={1}
+            value={form.description}
+            onChange={(e) => setForm({ ...form, description: e.target.value })}
+          />
+        </div>
+        <div className="sm:w-52">
+          <Input
+            label="Link do eventu na FB"
+            type="url"
+            placeholder="fb.com/events/..."
+            value={form.fb_event_url}
+            onChange={(e) => setForm({ ...form, fb_event_url: e.target.value })}
+          />
+        </div>
+      </div>
       <div className="flex flex-col sm:flex-row gap-4">
         <div className="flex-1">
           <Input
