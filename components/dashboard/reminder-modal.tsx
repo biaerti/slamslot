@@ -359,6 +359,9 @@ export default function ReminderModal({
                   Wyśle maile natychmiast do wszystkich{' '}
                   <span className="text-[#888]">({confirmedCount} os.)</span>{' '}
                   z listy głównej.
+                  {slam.organizer_message?.trim() && (
+                    <> Zostanie dołączona wiadomość od organizatora.</>
+                  )}
                 </p>
                 <button
                   onClick={() => setShowSendNowConfirm(true)}

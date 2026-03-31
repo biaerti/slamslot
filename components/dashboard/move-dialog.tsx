@@ -8,9 +8,10 @@ interface MoveDialogProps {
   onConfirm: (notify: boolean) => void
   onCancel: () => void
   personalMode?: boolean
+  hasWaiting?: boolean
 }
 
-export function MoveDialog({ participantName, direction, onConfirm, onCancel, personalMode }: MoveDialogProps) {
+export function MoveDialog({ participantName, direction, onConfirm, onCancel, personalMode, hasWaiting }: MoveDialogProps) {
   const [notify, setNotify] = useState(true)
 
   const isToConfirmed = direction === 'to_confirmed'
@@ -29,7 +30,13 @@ export function MoveDialog({ participantName, direction, onConfirm, onCancel, pe
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 px-4">
       <div className="bg-[#141414] border border-[#2a2a2a] p-6 w-full max-w-sm">
         <p className="font-bold text-white text-base mb-1">{title}</p>
-        <p className={`text-[#888] text-sm ${personalMode ? 'mb-6' : 'mb-5'}`}>{description}</p>
+        <p className="text-[#888] text-sm mb-3">{description}</p>
+
+        {!isToConfirmed && hasWaiting && !personalMode && (
+          <p className="text-[#666] text-sm mb-4">
+            Pierwsza osoba z listy rezerwowej automatycznie wejdzie na jej miejsce i dostanie maila.
+          </p>
+        )}
 
         {!personalMode && (
           <label className="flex items-center gap-3 cursor-pointer mb-6 group">
