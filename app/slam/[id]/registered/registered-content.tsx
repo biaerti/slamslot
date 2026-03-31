@@ -66,8 +66,8 @@ export default function RegisteredContent() {
             ) : (
               <ul className="space-y-2 text-sm text-[#aaa]">
                 <li className="flex gap-2">
-                  <span className="text-[#c0392b]">→</span>
-                  Sprawdź skrzynkę {email ? <span className="text-white">{email}</span> : 'email'} — wysłaliśmy potwierdzenie
+                  <span className="text-[#c0392b] shrink-0">→</span>
+                  <span>Wysłaliśmy potwierdzenie na{' '}{email ? <span className="text-white">{email}</span> : 'Twój email'}</span>
                 </li>
                 <li className="flex gap-2">
                   <span className="text-[#555]">→</span>
