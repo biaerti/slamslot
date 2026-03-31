@@ -13,6 +13,8 @@ interface ParticipantCardProps {
   onMoveToConfirmed?: () => void
   onMoveToWaiting?: () => void
   onDelete: () => void
+  onContactedChange?: (contacted: boolean) => void
+  personalMode?: boolean
 }
 
 export function ParticipantCard({
@@ -20,6 +22,8 @@ export function ParticipantCard({
   onMoveToConfirmed,
   onMoveToWaiting,
   onDelete,
+  onContactedChange,
+  personalMode,
 }: ParticipantCardProps) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
     useSortable({ id: registration.id })
@@ -77,6 +81,19 @@ export function ParticipantCard({
             <p className="text-[#555] text-xs mt-1 italic">&ldquo;{registration.note}&rdquo;</p>
           )}
           <p className="text-[#444] text-xs mt-1">{registeredAt}</p>
+          {personalMode && (
+            <label className="flex items-center gap-1.5 mt-2 cursor-pointer group/contact">
+              <input
+                type="checkbox"
+                checked={!!registration.contacted}
+                onChange={(e) => onContactedChange?.(e.target.checked)}
+                className="w-3 h-3 accent-[#c0392b]"
+              />
+              <span className={`text-xs transition-colors ${registration.contacted ? 'text-[#c0392b]' : 'text-[#444] group-hover/contact:text-[#666]'}`}>
+                Skontaktowano
+              </span>
+            </label>
+          )}
         </div>
 
         {/* Actions */}

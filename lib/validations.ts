@@ -16,6 +16,7 @@ export const createSlamSchema = z.object({
   image_url: z.string().url().optional().or(z.literal('')),
   show_spots: z.boolean().optional(),
   dashboard_password: z.string().min(4).max(100).optional().or(z.literal('')),
+  contact_mode: z.enum(['auto', 'personal']).optional(),
 })
 
 export const registerSchema = z.object({

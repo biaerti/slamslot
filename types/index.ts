@@ -17,6 +17,7 @@ export interface Slam {
   reminder_message: string | null
   reminder_skip_organizer_message: boolean
   reminder_sent_at: string | null
+  contact_mode: 'auto' | 'personal'
   created_at: string
 }
 
@@ -34,6 +35,7 @@ export interface Registration {
   cancel_token: string | null
   cancelled_by: 'manual' | 'email_link' | null
   attendance_confirmed: boolean | null
+  contacted: boolean | null
   registered_at: string
 }
 

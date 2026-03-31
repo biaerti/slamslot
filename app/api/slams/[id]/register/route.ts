@@ -38,11 +38,11 @@ export async function POST(
     // Fetch slam for email context
     const { data: slam } = await supabase
       .from('slams')
-      .select('name, event_date, organizer_message, organizer_email')
+      .select('name, event_date, organizer_message, organizer_email, contact_mode')
       .eq('id', id)
       .single()
 
-    if (slam) {
+    if (slam && slam.contact_mode !== 'personal') {
       if (result.status === 'confirmed') {
         sendConfirmedEmail({
           to: email,
@@ -67,7 +67,7 @@ export async function POST(
       }
     }
 
-    return Response.json({ status: result.status, position: result.position })
+    return Response.json({ status: result.status, position: result.position, contact_mode: slam?.contact_mode ?? 'auto' })
   } catch (err) {
     console.error('[POST /api/slams/[id]/register]', err)
     return Response.json({ error: 'Błąd serwera' }, { status: 500 })

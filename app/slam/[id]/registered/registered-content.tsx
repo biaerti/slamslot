@@ -9,6 +9,8 @@ export default function RegisteredContent() {
   const status = params.get('status') as 'confirmed' | 'waiting' | null
   const position = params.get('position')
   const name = params.get('name') ?? 'Uczestnik'
+  const contactMode = params.get('contact_mode') ?? 'auto'
+  const isPersonal = contactMode === 'personal'
 
   const isConfirmed = status === 'confirmed'
 
@@ -39,10 +41,10 @@ export default function RegisteredContent() {
               </>
             ) : (
               <>
-                Cześć <strong className="text-white">{name}</strong>! Zapisałeś/łaś się na listę
-                rezerwową — jesteś na pozycji{' '}
+                Cześć <strong className="text-white">{name}</strong>! Jesteś na liście
+                rezerwowej — pozycja{' '}
                 <strong className="text-yellow-400">#{position}</strong>.
-                Dostaniesz maila jeśli zwolni się miejsce.
+                {!isPersonal && ' Dostaniesz maila jeśli zwolni się miejsce.'}
               </>
             )}
           </p>
@@ -51,26 +53,37 @@ export default function RegisteredContent() {
             <p className="text-xs font-bold text-[#aaa] uppercase tracking-wider mb-3">
               Co dalej?
             </p>
-            <ul className="space-y-2 text-sm text-[#aaa]">
-              <li className="flex gap-2">
-                <span className="text-[#c0392b]">→</span>
-                Sprawdź skrzynkę email — wysłaliśmy potwierdzenie
-              </li>
-              <li className="flex gap-2">
-                <span className="text-[#555]">→</span>
-                <span className="text-[#666]">Nie ma maila? Sprawdź folder spam</span>
-              </li>
-              {!isConfirmed && (
+            {isPersonal ? (
+              <ul className="space-y-2 text-sm text-[#aaa]">
                 <li className="flex gap-2">
-                  <span className="text-yellow-500">→</span>
-                  Kliknij link w mailu żeby sprawdzać swoją pozycję na bieżąco
+                  <span className="text-[#c0392b]">→</span>
+                  {isConfirmed
+                    ? 'Organizator skontaktuje się z Tobą wkrótce i potwierdzi szczegóły'
+                    : 'Jesteś na liście rezerwowej — organizator skontaktuje się z Tobą, żeby potwierdzić zgłoszenie lub poinformuje jeśli zwolni się miejsce'}
                 </li>
-              )}
-              <li className="flex gap-2">
-                <span className="text-[#c0392b]">→</span>
-                Jeśli chcesz zrezygnować, odpowiedz na maila z potwierdzeniem
-              </li>
-            </ul>
+              </ul>
+            ) : (
+              <ul className="space-y-2 text-sm text-[#aaa]">
+                <li className="flex gap-2">
+                  <span className="text-[#c0392b]">→</span>
+                  Sprawdź skrzynkę email — wysłaliśmy potwierdzenie
+                </li>
+                <li className="flex gap-2">
+                  <span className="text-[#555]">→</span>
+                  <span className="text-[#666]">Nie ma maila? Sprawdź folder spam</span>
+                </li>
+                {!isConfirmed && (
+                  <li className="flex gap-2">
+                    <span className="text-yellow-500">→</span>
+                    Kliknij link w mailu żeby sprawdzać swoją pozycję na bieżąco
+                  </li>
+                )}
+                <li className="flex gap-2">
+                  <span className="text-[#c0392b]">→</span>
+                  Jeśli chcesz zrezygnować, odpowiedz na maila z potwierdzeniem
+                </li>
+              </ul>
+            )}
           </div>
 
           <Link

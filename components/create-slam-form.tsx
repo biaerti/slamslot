@@ -12,15 +12,15 @@ const MODE_INFO: Record<ContactMode, { title: string; desc: string; details: str
     title: 'Pełna automatyzacja',
     desc: 'System wysyła maile do uczestników automatycznie.',
     details: [
-      'Potwierdzenie zapisu od razu po rejestracji',
+      'Automatyczne maile od zapisy@slamslot.pl z potwierdzeniem zapisu',
       'Info o awansie z listy rezerwowej',
       'Opcjonalne przypomnienie przed slamem',
-      'Uczestnicy mogą sprawdzić swoją pozycję na liście',
+      'Możesz dodać własną wiadomość do każdego maila od organizatora',
     ],
   },
   personal: {
     title: 'Bliski kontakt',
-    desc: 'Żadnych automatycznych maili — Ty kontaktujesz się z uczestnikami osobiście.',
+    desc: 'Ty kontaktujesz się z uczestnikami osobiście.',
     details: [
       'Brak maili od zapisy@slamslot.pl',
       'Uczestnicy widzą tylko potwierdzenie że formularz się przyjął',
@@ -240,18 +240,9 @@ export default function CreateSlamForm() {
       />
       {/* Tryb kontaktu */}
       <div className="w-full pt-1">
-        <div className="flex items-center gap-2 mb-2">
-          <label className="block text-xs font-semibold text-[#aaa] uppercase tracking-wider">
-            Tryb kontaktu z uczestnikami
-          </label>
-          <button
-            type="button"
-            onClick={() => setShowModeInfo((v) => !v)}
-            className="text-[#444] hover:text-[#888] transition-colors text-xs leading-none"
-          >
-            ?
-          </button>
-        </div>
+        <label className="block text-xs font-semibold text-[#aaa] uppercase tracking-wider mb-2">
+          Tryb kontaktu z uczestnikami
+        </label>
 
         <div className="grid grid-cols-2 gap-2">
           {(['auto', 'personal'] as ContactMode[]).map((mode) => (
@@ -266,10 +257,19 @@ export default function CreateSlamForm() {
               }`}
             >
               <p className="text-sm font-bold leading-tight">{MODE_INFO[mode].title}</p>
-              <p className="text-xs mt-0.5 opacity-70 leading-snug">{MODE_INFO[mode].desc}</p>
+              <p className="text-[11.5px] mt-0.5 opacity-70 leading-snug">{MODE_INFO[mode].desc}</p>
             </button>
           ))}
         </div>
+
+        <button
+          type="button"
+          onClick={() => setShowModeInfo((v) => !v)}
+          className="flex items-center gap-1.5 mt-1.5 text-xs text-[#555] hover:text-[#888] transition-colors"
+        >
+          <span className={`text-[#c0392b] transition-transform duration-200 ${showModeInfo ? 'rotate-180' : ''}`}>▼</span>
+          <span>{showModeInfo ? 'Zwiń' : 'Zobacz więcej'}</span>
+        </button>
 
         {showModeInfo && (
           <div className="mt-2 border border-[#2a2a2a] bg-[#0d0d0d] p-4 grid grid-cols-2 gap-4">
@@ -295,13 +295,26 @@ export default function CreateSlamForm() {
         )}
       </div>
 
-      <Textarea
-        label="Opis"
-        placeholder="Opis wydarzenia - pojawi się na stronie zapisów..."
-        rows={2}
-        value={form.description}
-        onChange={(e) => setForm({ ...form, description: e.target.value })}
-      />
+      <div className="flex flex-col sm:flex-row gap-4">
+        <div className="flex-1">
+          <Textarea
+            label="Opis"
+            placeholder="Opis wydarzenia - pojawi się na stronie zapisów..."
+            rows={1}
+            value={form.description}
+            onChange={(e) => setForm({ ...form, description: e.target.value })}
+          />
+        </div>
+        <div className="sm:w-52">
+          <Input
+            label="Link do eventu na FB"
+            type="url"
+            placeholder="https://fb.com/events/..."
+            value={form.fb_event_url}
+            onChange={(e) => setForm({ ...form, fb_event_url: e.target.value })}
+          />
+        </div>
+      </div>
       <div className="flex flex-col sm:flex-row gap-4">
         <div className="flex-1">
           <Input
@@ -338,7 +351,7 @@ export default function CreateSlamForm() {
             </span>
             <span
               title="Na stronie zapisu uczestnicy zobaczą ile miejsc jest jeszcze dostępnych"
-              className="text-[#444] hover:text-[#888] transition-colors cursor-help text-xs"
+              className="text-[#c0392b] hover:text-[#e74c3c] transition-colors cursor-help text-xs"
             >
               ?
             </span>
@@ -356,16 +369,7 @@ export default function CreateSlamForm() {
             autoComplete="email"
           />
         </div>
-        <div className="flex-1">
-          <Input
-            label="Link do eventu na FB"
-            type="url"
-            placeholder="https://fb.com/events/..."
-            value={form.fb_event_url}
-            onChange={(e) => setForm({ ...form, fb_event_url: e.target.value })}
-          />
-        </div>
-        <div className="sm:w-40">
+        <div className="sm:w-52">
           <Input
             label="Lokalizacja"
             placeholder="Miasto / Lokal"

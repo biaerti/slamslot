@@ -146,3 +146,5 @@ ALTER TABLE registrations DISABLE ROW LEVEL SECURITY;
 -- ALTER TABLE slams ADD COLUMN IF NOT EXISTS reminder_skip_organizer_message boolean NOT NULL DEFAULT false;
 -- ALTER TABLE slams ADD COLUMN IF NOT EXISTS reminder_sent_at timestamptz;
 -- ALTER TABLE registrations ADD COLUMN IF NOT EXISTS attendance_confirmed boolean;
+-- ALTER TABLE slams ADD COLUMN IF NOT EXISTS contact_mode text NOT NULL DEFAULT 'auto';
+-- ALTER TABLE registrations ADD COLUMN IF NOT EXISTS contacted boolean;

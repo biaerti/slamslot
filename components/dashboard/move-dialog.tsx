@@ -7,9 +7,10 @@ interface MoveDialogProps {
   direction: 'to_confirmed' | 'to_waiting'
   onConfirm: (notify: boolean) => void
   onCancel: () => void
+  personalMode?: boolean
 }
 
-export function MoveDialog({ participantName, direction, onConfirm, onCancel }: MoveDialogProps) {
+export function MoveDialog({ participantName, direction, onConfirm, onCancel, personalMode }: MoveDialogProps) {
   const [notify, setNotify] = useState(true)
 
   const isToConfirmed = direction === 'to_confirmed'
@@ -28,19 +29,21 @@ export function MoveDialog({ participantName, direction, onConfirm, onCancel }: 
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 px-4">
       <div className="bg-[#141414] border border-[#2a2a2a] p-6 w-full max-w-sm">
         <p className="font-bold text-white text-base mb-1">{title}</p>
-        <p className="text-[#888] text-sm mb-5">{description}</p>
+        <p className={`text-[#888] text-sm ${personalMode ? 'mb-6' : 'mb-5'}`}>{description}</p>
 
-        <label className="flex items-center gap-3 cursor-pointer mb-6 group">
-          <input
-            type="checkbox"
-            checked={notify}
-            onChange={(e) => setNotify(e.target.checked)}
-            className="w-4 h-4 accent-[#c0392b]"
-          />
-          <span className="text-sm text-[#aaa] group-hover:text-white transition-colors">
-            Powiadom uczestnika mailem
-          </span>
-        </label>
+        {!personalMode && (
+          <label className="flex items-center gap-3 cursor-pointer mb-6 group">
+            <input
+              type="checkbox"
+              checked={notify}
+              onChange={(e) => setNotify(e.target.checked)}
+              className="w-4 h-4 accent-[#c0392b]"
+            />
+            <span className="text-sm text-[#aaa] group-hover:text-white transition-colors">
+              Powiadom uczestnika mailem
+            </span>
+          </label>
+        )}
 
         <div className="flex gap-2">
           <button

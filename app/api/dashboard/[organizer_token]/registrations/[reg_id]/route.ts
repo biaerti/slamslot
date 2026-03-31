@@ -35,7 +35,7 @@ export async function PATCH(
 
     if (action === 'move_to_confirmed') {
       const updated = await moveToConfirmed(slam.id, reg_id)
-      if (updated && notify) {
+      if (updated && notify && slam.contact_mode !== 'personal') {
         sendPromotedEmail({
           to: updated.email,
           participantName: updated.name,
@@ -51,7 +51,7 @@ export async function PATCH(
 
     if (action === 'move_to_waiting') {
       const updated = await moveToWaiting(slam.id, reg_id)
-      if (updated && notify) {
+      if (updated && notify && slam.contact_mode !== 'personal') {
         sendMovedToWaitingEmail({
           to: updated.email,
           participantName: updated.name,
@@ -86,7 +86,7 @@ export async function DELETE(
     // If a confirmed spot was freed, promote first from waitlist
     if (wasConfirmed) {
       const promoted = await promoteFirstFromWaitlist(slam.id)
-      if (promoted) {
+      if (promoted && slam.contact_mode !== 'personal') {
         sendPromotedEmail({
           to: promoted.email,
           participantName: promoted.name,

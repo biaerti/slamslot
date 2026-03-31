@@ -44,6 +44,30 @@ export default function DashboardLists({
   const [showCancelled, setShowCancelled] = useState(false)
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 8 } }))
 
+  const personalMode = data.slam.contact_mode === 'personal'
+
+  const handleContactedChange = async (regId: string, contacted: boolean) => {
+    // Optimistic update
+    const update = (list: Registration[]) =>
+      list.map((r) => (r.id === regId ? { ...r, contacted } : r))
+    onDataChange({ ...data, confirmed: update(data.confirmed), waiting: update(data.waiting) })
+
+    try {
+      const res = await fetch(
+        `/api/dashboard/${organizerToken}/registrations/${regId}/contacted`,
+        {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ contacted }),
+        }
+      )
+      if (!res.ok) throw new Error()
+    } catch {
+      toast.error('Nie udało się zapisać')
+      await onRefresh()
+    }
+  }
+
   const patchRegistration = async (regId: string, action: string, notify: boolean) => {
     const res = await fetch(
       `/api/dashboard/${organizerToken}/registrations/${regId}`,
@@ -148,6 +172,7 @@ export default function DashboardLists({
           direction={pendingMove.direction}
           onConfirm={confirmMove}
           onCancel={() => setPendingMove(null)}
+          personalMode={personalMode}
         />
       )}
 
@@ -182,6 +207,8 @@ export default function DashboardLists({
                     registration={reg}
                     onMoveToWaiting={() => setPendingMove({ regId: reg.id, name: reg.name, direction: 'to_waiting' })}
                     onDelete={() => deleteRegistration(reg.id)}
+                    personalMode={personalMode}
+                    onContactedChange={(contacted) => handleContactedChange(reg.id, contacted)}
                   />
                 ))}
               </div>
@@ -213,6 +240,8 @@ export default function DashboardLists({
                     registration={reg}
                     onMoveToConfirmed={() => setPendingMove({ regId: reg.id, name: reg.name, direction: 'to_confirmed' })}
                     onDelete={() => deleteRegistration(reg.id)}
+                    personalMode={personalMode}
+                    onContactedChange={(contacted) => handleContactedChange(reg.id, contacted)}
                   />
                 ))}
               </div>
