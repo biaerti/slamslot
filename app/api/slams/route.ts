@@ -47,7 +47,7 @@ export async function POST(req: NextRequest) {
 
     // Wyślij email do organizatora jeśli podał adres
     if (organizer_email) {
-      sendOrganizerEmail({
+      await sendOrganizerEmail({
         to: organizer_email,
         slamName: name,
         slamDate: event_date,

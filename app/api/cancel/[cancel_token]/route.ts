@@ -24,19 +24,19 @@ export async function POST(
       .select('name, email, position, cancel_token')
       .eq('slam_id', result.slamId)
       .eq('status', 'confirmed')
-      .order('registered_at', { ascending: false })
+      .order('position', { ascending: false })
       .limit(1)
       .single()
 
     if (promoted) {
       const { data: slam } = await supabase
         .from('slams')
-        .select('name, event_date, organizer_message, organizer_email')
+        .select('name, event_date, organizer_message, organizer_email, contact_mode')
         .eq('id', result.slamId)
         .single()
 
-      if (slam) {
-        sendPromotedEmail({
+      if (slam && slam.contact_mode !== 'personal') {
+        await sendPromotedEmail({
           to: promoted.email,
           participantName: promoted.name,
           slamName: slam.name,

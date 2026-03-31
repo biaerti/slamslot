@@ -36,7 +36,7 @@ export async function PATCH(
     if (action === 'move_to_confirmed') {
       const updated = await moveToConfirmed(slam.id, reg_id)
       if (updated && notify && slam.contact_mode !== 'personal') {
-        sendPromotedEmail({
+        await sendPromotedEmail({
           to: updated.email,
           participantName: updated.name,
           slamName: slam.name,
