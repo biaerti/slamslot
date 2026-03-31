@@ -52,13 +52,25 @@ export async function PATCH(
     if (action === 'move_to_waiting') {
       const updated = await moveToWaiting(slam.id, reg_id)
       if (updated && notify && slam.contact_mode !== 'personal') {
-        sendMovedToWaitingEmail({
+        await sendMovedToWaitingEmail({
           to: updated.email,
           participantName: updated.name,
           slamName: slam.name,
           slamDate: slam.event_date,
           position: updated.position,
           waitlistToken: updated.waitlist_check_token,
+          organizerMessage: slam.organizer_message,
+        })
+      }
+      const promoted = await promoteFirstFromWaitlist(slam.id)
+      if (promoted && slam.contact_mode !== 'personal') {
+        await sendPromotedEmail({
+          to: promoted.email,
+          participantName: promoted.name,
+          slamName: slam.name,
+          slamDate: slam.event_date,
+          position: promoted.position,
+          cancelToken: promoted.cancel_token,
           organizerMessage: slam.organizer_message,
         })
       }
@@ -87,7 +99,7 @@ export async function DELETE(
     if (wasConfirmed) {
       const promoted = await promoteFirstFromWaitlist(slam.id)
       if (promoted && slam.contact_mode !== 'personal') {
-        sendPromotedEmail({
+        await sendPromotedEmail({
           to: promoted.email,
           participantName: promoted.name,
           slamName: slam.name,
