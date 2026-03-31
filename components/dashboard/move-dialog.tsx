@@ -8,10 +8,10 @@ interface MoveDialogProps {
   onConfirm: (notify: boolean) => void
   onCancel: () => void
   personalMode?: boolean
-  hasWaiting?: boolean
+  firstWaitingName?: string
 }
 
-export function MoveDialog({ participantName, direction, onConfirm, onCancel, personalMode, hasWaiting }: MoveDialogProps) {
+export function MoveDialog({ participantName, direction, onConfirm, onCancel, personalMode, firstWaitingName }: MoveDialogProps) {
   const [notify, setNotify] = useState(true)
 
   const isToConfirmed = direction === 'to_confirmed'
@@ -30,16 +30,10 @@ export function MoveDialog({ participantName, direction, onConfirm, onCancel, pe
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 px-4">
       <div className="bg-[#141414] border border-[#2a2a2a] p-6 w-full max-w-sm">
         <p className="font-bold text-white text-base mb-1">{title}</p>
-        <p className="text-[#888] text-sm mb-3">{description}</p>
-
-        {!isToConfirmed && hasWaiting && !personalMode && (
-          <p className="text-[#666] text-sm mb-4">
-            Pierwsza osoba z listy rezerwowej automatycznie wejdzie na jej miejsce i dostanie maila.
-          </p>
-        )}
+        <p className="text-[#888] text-sm mb-4">{description}</p>
 
         {!personalMode && (
-          <label className="flex items-center gap-3 cursor-pointer mb-6 group">
+          <label className="flex items-center gap-3 cursor-pointer mb-4 group">
             <input
               type="checkbox"
               checked={notify}
@@ -50,6 +44,16 @@ export function MoveDialog({ participantName, direction, onConfirm, onCancel, pe
               Powiadom uczestnika mailem
             </span>
           </label>
+        )}
+
+        {!isToConfirmed && firstWaitingName && !personalMode && (
+          <p className="text-[#555] text-xs mb-6">
+            Uwaga: <span className="text-[#777]">{firstWaitingName}</span> (pierwsza osoba z listy rezerwowej) automatycznie wejdzie na to miejsce i dostanie maila. Możesz zmienić kolejność przeciągając karty.
+          </p>
+        )}
+
+        {(isToConfirmed || !firstWaitingName || personalMode) && (
+          <div className="mb-6" />
         )}
 
         <div className="flex gap-2">

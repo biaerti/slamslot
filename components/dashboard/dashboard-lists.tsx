@@ -182,7 +182,7 @@ export default function DashboardLists({
           onConfirm={confirmMove}
           onCancel={() => setPendingMove(null)}
           personalMode={personalMode}
-          hasWaiting={data.waiting.length > 0}
+          firstWaitingName={data.waiting[0]?.name}
         />
       )}
 
