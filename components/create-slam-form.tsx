@@ -7,10 +7,11 @@ import { toast } from 'sonner'
 
 type ContactMode = 'auto' | 'personal'
 
-const MODE_INFO: Record<ContactMode, { title: string; desc: string; details: string[] }> = {
+const MODE_INFO: Record<ContactMode, { title: string; desc: string; forWhom: string; details: string[] }> = {
   auto: {
     title: 'Pełna automatyzacja',
     desc: 'System wysyła maile do uczestników automatycznie.',
+    forWhom: 'Dla organizatorów, którym zależy żeby uczestnicy wiedzieli od razu co i jak — i chcą sprawnie zarządzać listą bez ręcznego pisania.',
     details: [
       'Automatyczne maile od zapisy@slamslot.pl z potwierdzeniem zapisu',
       'Info o awansie z listy rezerwowej',
@@ -21,6 +22,7 @@ const MODE_INFO: Record<ContactMode, { title: string; desc: string; details: str
   personal: {
     title: 'Bliski kontakt',
     desc: 'Ty kontaktujesz się z uczestnikami osobiście.',
+    forWhom: 'Dla organizatorów, którym zależy na bezpośrednim kontakcie z każdym uczestnikiem — platforma zbiera zgłoszenia, resztę robisz sam/a.',
     details: [
       'Brak maili od zapisy@slamslot.pl',
       'Uczestnicy widzą tylko potwierdzenie że formularz się przyjął',
@@ -275,9 +277,10 @@ export default function CreateSlamForm() {
           <div className="mt-2 border border-[#2a2a2a] bg-[#0d0d0d] p-4 grid grid-cols-2 gap-4">
             {(['auto', 'personal'] as ContactMode[]).map((mode) => (
               <div key={mode}>
-                <p className={`text-xs font-bold uppercase tracking-wider mb-2 ${mode === form.contact_mode ? 'text-[#c0392b]' : 'text-[#555]'}`}>
+                <p className={`text-xs font-bold uppercase tracking-wider mb-1 ${mode === form.contact_mode ? 'text-[#c0392b]' : 'text-[#555]'}`}>
                   {MODE_INFO[mode].title}
                 </p>
+                <p className="text-xs text-[#444] mb-2 italic">{MODE_INFO[mode].forWhom}</p>
                 <ul className="space-y-1">
                   {MODE_INFO[mode].details.map((d, i) => (
                     <li key={i} className="flex gap-1.5 text-xs text-[#666]">
