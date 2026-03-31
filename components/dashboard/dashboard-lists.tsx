@@ -194,8 +194,8 @@ export default function DashboardLists({
               {pendingDelete.name} zostanie usunięty/a z listy.
             </p>
             {pendingDelete.fromConfirmed && data.waiting.length > 0 && !personalMode && (
-              <p className="text-[#666] text-sm mb-6">
-                Pierwsza osoba z listy rezerwowej automatycznie wejdzie na jej miejsce i dostanie maila.
+              <p className="text-[#555] text-xs mb-6">
+                Uwaga: <span className="text-[#777]">{data.waiting[0]?.name}</span> (pierwsza osoba z listy rezerwowej) automatycznie wejdzie na to miejsce i dostanie maila. Możesz zmienić kolejność przeciągając karty.
               </p>
             )}
             {(!pendingDelete.fromConfirmed || data.waiting.length === 0 || personalMode) && (
