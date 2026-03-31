@@ -34,6 +34,12 @@ interface PendingMove {
   direction: 'to_confirmed' | 'to_waiting'
 }
 
+interface PendingDelete {
+  regId: string
+  name: string
+  fromConfirmed: boolean
+}
+
 export default function DashboardLists({
   data,
   organizerToken,
@@ -41,6 +47,7 @@ export default function DashboardLists({
   onRefresh,
 }: DashboardListsProps) {
   const [pendingMove, setPendingMove] = useState<PendingMove | null>(null)
+  const [pendingDelete, setPendingDelete] = useState<PendingDelete | null>(null)
   const [showCancelled, setShowCancelled] = useState(false)
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 8 } }))
 
@@ -80,8 +87,10 @@ export default function DashboardLists({
     if (!res.ok) throw new Error('Błąd serwera')
   }
 
-  const deleteRegistration = async (regId: string) => {
-    if (!confirm('Anulować uczestnika? Zostanie oznaczony jako anulowany.')) return
+  const confirmDelete = async () => {
+    if (!pendingDelete) return
+    const { regId } = pendingDelete
+    setPendingDelete(null)
     try {
       const res = await fetch(
         `/api/dashboard/${organizerToken}/registrations/${regId}`,
@@ -176,6 +185,39 @@ export default function DashboardLists({
         />
       )}
 
+      {pendingDelete && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 px-4">
+          <div className="bg-[#141414] border border-[#2a2a2a] p-6 w-full max-w-sm">
+            <p className="font-bold text-white text-base mb-1">Anulować uczestnika?</p>
+            <p className="text-[#888] text-sm mb-2">
+              {pendingDelete.name} zostanie usunięty/a z listy.
+            </p>
+            {pendingDelete.fromConfirmed && data.waiting.length > 0 && !personalMode && (
+              <p className="text-[#666] text-sm mb-6">
+                Pierwsza osoba z listy rezerwowej automatycznie wejdzie na jej miejsce i dostanie maila.
+              </p>
+            )}
+            {(!pendingDelete.fromConfirmed || data.waiting.length === 0 || personalMode) && (
+              <div className="mb-6" />
+            )}
+            <div className="flex gap-2">
+              <button
+                onClick={confirmDelete}
+                className="flex-1 bg-[#c0392b] hover:bg-[#a93226] text-white text-sm font-bold py-2 transition-colors"
+              >
+                Anuluj uczestnika
+              </button>
+              <button
+                onClick={() => setPendingDelete(null)}
+                className="flex-1 border border-[#2a2a2a] text-[#888] hover:text-white text-sm py-2 transition-colors"
+              >
+                Wróć
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <DndContext
         sensors={sensors}
         collisionDetection={closestCenter}
@@ -206,7 +248,7 @@ export default function DashboardLists({
                     key={reg.id}
                     registration={reg}
                     onMoveToWaiting={() => setPendingMove({ regId: reg.id, name: reg.name, direction: 'to_waiting' })}
-                    onDelete={() => deleteRegistration(reg.id)}
+                    onDelete={() => setPendingDelete({ regId: reg.id, name: reg.name, fromConfirmed: true })}
                     personalMode={personalMode}
                     onContactedChange={(contacted) => handleContactedChange(reg.id, contacted)}
                   />
@@ -239,7 +281,7 @@ export default function DashboardLists({
                     key={reg.id}
                     registration={reg}
                     onMoveToConfirmed={() => setPendingMove({ regId: reg.id, name: reg.name, direction: 'to_confirmed' })}
-                    onDelete={() => deleteRegistration(reg.id)}
+                    onDelete={() => setPendingDelete({ regId: reg.id, name: reg.name, fromConfirmed: false })}
                     personalMode={personalMode}
                     onContactedChange={(contacted) => handleContactedChange(reg.id, contacted)}
                   />
