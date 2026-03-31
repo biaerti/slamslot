@@ -44,7 +44,7 @@ export async function POST(
 
     if (slam && slam.contact_mode !== 'personal') {
       if (result.status === 'confirmed') {
-        sendConfirmedEmail({
+        await sendConfirmedEmail({
           to: email,
           participantName: name,
           slamName: slam.name,
@@ -55,7 +55,7 @@ export async function POST(
           organizerEmail: slam.organizer_email,
         })
       } else {
-        sendWaitlistEmail({
+        await sendWaitlistEmail({
           to: email,
           participantName: name,
           slamName: slam.name,

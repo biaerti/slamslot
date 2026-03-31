@@ -68,7 +68,7 @@ export default async function SlamPage(props: { params: Promise<{ id: string }> 
                 <span className="text-[#aaa]">
                   <span className="text-white font-semibold">Miejsca:</span>{' '}
                   {isFull
-                    ? `Brak miejsc (${slam.waiting_count} osób na liście rez.)`
+                    ? 'Brak miejsc'
                     : `${spotsLeft} z ${slam.max_participants} dostępnych`}
                 </span>
               </div>
