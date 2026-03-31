@@ -6,7 +6,7 @@ export async function POST(
   { params }: { params: Promise<{ organizer_token: string }> }
 ) {
   const { organizer_token } = await params
-  const { name, description, location, fb_event_url, show_spots, event_date, max_participants, image_url } = await req.json()
+  const { name, organizer_name, description, location, fb_event_url, show_spots, event_date, max_participants, image_url } = await req.json()
 
   if (!name?.trim()) {
     return Response.json({ error: 'Nazwa slamu jest wymagana' }, { status: 400 })
@@ -16,6 +16,7 @@ export async function POST(
     .from('slams')
     .update({
       name: name.trim(),
+      ...(organizer_name?.trim() ? { organizer_name: organizer_name.trim() } : {}),
       description: description || null,
       location: location || null,
       fb_event_url: fb_event_url || null,

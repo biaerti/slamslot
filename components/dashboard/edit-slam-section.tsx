@@ -14,6 +14,7 @@ interface EditSlamModalProps {
 export default function EditSlamModal({ slam, organizerToken, onSaved, onClose }: EditSlamModalProps) {
   const [saving, setSaving] = useState(false)
   const [name, setName] = useState(slam.name)
+  const [organizerName, setOrganizerName] = useState(slam.organizer_name ?? '')
   const [description, setDescription] = useState(slam.description ?? '')
   const [location, setLocation] = useState(slam.location ?? '')
   const [fbEventUrl, setFbEventUrl] = useState(slam.fb_event_url ?? '')
@@ -51,6 +52,7 @@ export default function EditSlamModal({ slam, organizerToken, onSaved, onClose }
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name,
+          organizer_name: organizerName,
           description,
           location,
           fb_event_url: fbEventUrl,
@@ -61,7 +63,7 @@ export default function EditSlamModal({ slam, organizerToken, onSaved, onClose }
         }),
       })
       if (!res.ok) throw new Error()
-      onSaved({ name, description: description || null, location: location || null, fb_event_url: fbEventUrl || null, show_spots: showSpots, event_date: eventDate.replace('T', ' '), max_participants: Number(maxParticipants), image_url: imageUrl || null })
+      onSaved({ name, organizer_name: organizerName || slam.organizer_name, description: description || null, location: location || null, fb_event_url: fbEventUrl || null, show_spots: showSpots, event_date: eventDate.replace('T', ' '), max_participants: Number(maxParticipants), image_url: imageUrl || null })
       toast.success('Dane slamu zaktualizowane')
       onClose()
     } catch {
@@ -88,6 +90,14 @@ export default function EditSlamModal({ slam, organizerToken, onSaved, onClose }
             <input
               value={name}
               onChange={(e) => setName(e.target.value)}
+              className="w-full bg-[#1a1a1a] border border-[#2a2a2a] text-[#aaa] text-sm px-3 py-2 focus:outline-none focus:border-[#444]"
+            />
+          </div>
+          <div>
+            <label className="block text-xs text-[#555] uppercase tracking-wider mb-1">Nazwa organizatora</label>
+            <input
+              value={organizerName}
+              onChange={(e) => setOrganizerName(e.target.value)}
               className="w-full bg-[#1a1a1a] border border-[#2a2a2a] text-[#aaa] text-sm px-3 py-2 focus:outline-none focus:border-[#444]"
             />
           </div>
