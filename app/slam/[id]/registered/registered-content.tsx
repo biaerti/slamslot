@@ -12,6 +12,7 @@ export default function RegisteredContent() {
   const contactMode = params.get('contact_mode') ?? 'auto'
   const isPersonal = contactMode === 'personal'
 
+  const email = params.get('email')
   const isConfirmed = status === 'confirmed'
 
   return (
@@ -66,7 +67,7 @@ export default function RegisteredContent() {
               <ul className="space-y-2 text-sm text-[#aaa]">
                 <li className="flex gap-2">
                   <span className="text-[#c0392b]">→</span>
-                  Sprawdź skrzynkę email — wysłaliśmy potwierdzenie
+                  Sprawdź skrzynkę {email ? <span className="text-white">{email}</span> : 'email'} — wysłaliśmy potwierdzenie
                 </li>
                 <li className="flex gap-2">
                   <span className="text-[#555]">→</span>
@@ -80,7 +81,7 @@ export default function RegisteredContent() {
                 )}
                 <li className="flex gap-2">
                   <span className="text-[#c0392b]">→</span>
-                  Jeśli chcesz zrezygnować, odpowiedz na maila z potwierdzeniem
+                  Jeśli chcesz zrezygnować, kliknij link w mailu z potwierdzeniem
                 </li>
               </ul>
             )}

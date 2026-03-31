@@ -35,6 +35,7 @@ export default function RegistrationForm({ slamId, slamName, organizerName }: Re
         position: String(data.position),
         name: form.name,
         contact_mode: data.contact_mode ?? 'auto',
+        email: form.email,
       })
       router.push(`/slam/${slamId}/registered?${params}`)
     } catch (err: unknown) {
