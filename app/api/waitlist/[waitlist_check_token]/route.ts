@@ -23,7 +23,7 @@ export async function GET(
     .single()
 
   return Response.json({
-    name_initial: reg.name.charAt(0).toUpperCase(),
+    name: reg.name,
     position: reg.position,
     status: reg.status,
     slam_name: slam?.name ?? '',

@@ -18,7 +18,7 @@ export default async function WaitlistPage(
 
   const data = await res.json()
   const {
-    name_initial,
+    name,
     position,
     status,
     slam_name,
@@ -58,7 +58,7 @@ export default async function WaitlistPage(
                 #{position}
               </p>
               <p className="text-[#aaa] text-sm mt-4">
-                Uczestnik: <span className="text-white font-semibold">{name_initial}...</span>
+                Uczestnik: <span className="text-white font-semibold">{name}</span>
               </p>
               <p className="text-[#555] text-xs mt-4">
                 Gdy zwolni się miejsce, przesuniemy Cię automatycznie na listę główną

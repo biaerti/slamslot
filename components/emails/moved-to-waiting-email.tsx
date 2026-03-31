@@ -58,6 +58,12 @@ export default function MovedToWaitingEmail({
               <strong>Pozycja na liście rez.:</strong> #{position}
             </Text>
           </Section>
+          {organizerMessage && (
+            <Section style={organizerBox}>
+              <Text style={organizerLabel}>Od organizatora:</Text>
+              <Text style={organizerText}>{organizerMessage}</Text>
+            </Section>
+          )}
           <Text style={text}>
             Możesz na bieżąco sprawdzać swoją pozycję poniżej.
             W razie pytań skontaktuj się z organizatorem.
@@ -65,12 +71,6 @@ export default function MovedToWaitingEmail({
           <Button href={checkPositionUrl} style={button}>
             Sprawdź swoją pozycję
           </Button>
-          {organizerMessage && (
-            <Section style={organizerBox}>
-              <Text style={organizerLabel}>Od organizatora:</Text>
-              <Text style={organizerText}>{organizerMessage}</Text>
-            </Section>
-          )}
           <Hr style={hr} />
           <Text style={footer}>Przepraszamy za utrudnienia.</Text>
         </Container>
