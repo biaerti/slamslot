@@ -13,10 +13,12 @@ interface ExportModalProps {
 
 export default function ExportModal({ data, formattedDate, onClose }: ExportModalProps) {
   const [exporting, setExporting] = useState<'csv' | 'xlsx' | 'pdf' | null>(null)
+  const [includeCancelled, setIncludeCancelled] = useState(false)
 
   const rows = [
     ...data.confirmed.map((r) => ({ ...r, listStatus: 'Lista główna', listStatusPDF: 'Glowna' })),
     ...data.waiting.map((r) => ({ ...r, listStatus: 'Rezerwowa', listStatusPDF: 'Rezerwa' })),
+    ...(includeCancelled ? (data.cancelled ?? []).map((r) => ({ ...r, listStatus: 'Anulowany', listStatusPDF: 'Anulowany' })) : []),
   ]
 
   // jsPDF + helvetica nie obsługuje polskich znaków — transliteracja
@@ -174,9 +176,23 @@ export default function ExportModal({ data, formattedDate, onClose }: ExportModa
           <button onClick={onClose} className="text-[#555] hover:text-[#aaa] text-lg leading-none">×</button>
         </div>
 
-        <p className="text-xs text-[#444] mb-5">
-          {data.confirmed.length + data.waiting.length} uczestników ({data.confirmed.length} lista główna, {data.waiting.length} rezerwowa)
+        <p className="text-xs text-[#444] mb-4">
+          {data.confirmed.length + data.waiting.length}{includeCancelled && (data.cancelled?.length ?? 0) > 0 ? ` + ${data.cancelled.length} anulowanych` : ''} uczestników ({data.confirmed.length} lista główna, {data.waiting.length} rezerwowa)
         </p>
+
+        {(data.cancelled?.length ?? 0) > 0 && (
+          <label className="flex items-center gap-2 cursor-pointer group mb-5">
+            <input
+              type="checkbox"
+              checked={includeCancelled}
+              onChange={(e) => setIncludeCancelled(e.target.checked)}
+              className="w-3.5 h-3.5 accent-[#c0392b]"
+            />
+            <span className="text-xs text-[#555] group-hover:text-[#aaa] transition-colors">
+              Uwzględnij anulowanych ({data.cancelled.length})
+            </span>
+          </label>
+        )}
 
         <div className="space-y-2">
           <button
