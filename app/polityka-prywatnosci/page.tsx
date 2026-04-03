@@ -87,9 +87,7 @@ export default function PolitykaPrywatnosci() {
           <section>
             <h2 className="text-white font-bold text-base mb-2 uppercase tracking-wide">Narzędzia zewnętrzne</h2>
             <p>
-              Serwis korzysta z infrastruktury Supabase (baza danych, przechowywanie plików)
-              oraz Resend (wysyłka emaili transakcyjnych). Oba serwisy przetwarzają dane
-              wyłącznie w zakresie niezbędnym do świadczenia usługi.
+              Serwis korzysta z infrastruktury Supabase (baza danych) oraz Resend (wysyłka emaili transakcyjnych). Dane przechowywane są na serwerach Supabase zlokalizowanych w Wielkiej Brytanii (Londyn, region eu-west-2). Wielka Brytania posiada decyzję adequacy Komisji Europejskiej, co oznacza że poziom ochrony danych jest uznany za równoważny z RODO. Oba serwisy przetwarzają dane wyłącznie w zakresie niezbędnym do świadczenia usługi.
             </p>
           </section>
 
