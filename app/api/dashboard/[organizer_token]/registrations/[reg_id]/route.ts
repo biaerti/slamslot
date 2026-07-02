@@ -62,18 +62,9 @@ export async function PATCH(
           organizerMessage: slam.organizer_message,
         })
       }
-      const promoted = await promoteFirstFromWaitlist(slam.id)
-      if (promoted && slam.contact_mode !== 'personal') {
-        await sendPromotedEmail({
-          to: promoted.email,
-          participantName: promoted.name,
-          slamName: slam.name,
-          slamDate: slam.event_date,
-          position: promoted.position,
-          cancelToken: promoted.cancel_token,
-          organizerMessage: slam.organizer_message,
-        })
-      }
+      // Ręczne przeniesienie na rezerwową NIE awansuje automatycznie
+      // nikogo z listy rezerwowej - lista główna po prostu się zmniejsza,
+      // a organizator sam decyduje kogo (i czy) awansować.
       return Response.json({ updated: true })
     }
 
