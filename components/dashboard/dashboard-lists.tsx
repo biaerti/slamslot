@@ -75,13 +75,18 @@ export default function DashboardLists({
     }
   }
 
-  const patchRegistration = async (regId: string, action: string, notify: boolean) => {
+  const patchRegistration = async (
+    regId: string,
+    action: string,
+    notify: boolean,
+    backfill: boolean
+  ) => {
     const res = await fetch(
       `/api/dashboard/${organizerToken}/registrations/${regId}`,
       {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action, notify }),
+        body: JSON.stringify({ action, notify, backfill }),
       }
     )
     if (!res.ok) throw new Error('Błąd serwera')
@@ -104,13 +109,13 @@ export default function DashboardLists({
     }
   }
 
-  const confirmMove = async (notify: boolean) => {
+  const confirmMove = async ({ notify, backfill }: { notify: boolean; backfill: boolean }) => {
     if (!pendingMove) return
     const { regId, direction } = pendingMove
     setPendingMove(null)
     try {
       const action = direction === 'to_confirmed' ? 'move_to_confirmed' : 'move_to_waiting'
-      await patchRegistration(regId, action, notify)
+      await patchRegistration(regId, action, notify, backfill)
       const msg = direction === 'to_confirmed' ? 'Przeniesiono na listę główną' : 'Przeniesiono na listę rezerwową'
       toast.success(notify ? `${msg} — wysłano email` : msg)
       await onRefresh()
@@ -183,6 +188,7 @@ export default function DashboardLists({
           onCancel={() => setPendingMove(null)}
           personalMode={personalMode}
           firstWaitingName={data.waiting[0]?.name}
+          lastConfirmedName={data.confirmed[data.confirmed.length - 1]?.name}
         />
       )}
 

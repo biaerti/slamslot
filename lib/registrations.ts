@@ -153,6 +153,45 @@ export async function moveToConfirmed(
     .select()
     .single()
 
+  await reorderConfirmedList(slamId)
+  await reorderWaitingList(slamId)
+
+  return updated
+}
+
+/**
+ * Spycha ostatnią osobę z listy głównej na początek rezerwowej.
+ * Używane przy awansie, gdy organizator chce utrzymać limit miejsc
+ * (zamiana: ktoś wchodzi na główną, ostatni z głównej schodzi).
+ * Pomija osobę `exceptId` (świeżo awansowaną), żeby jej nie zepchnąć.
+ */
+export async function demoteLastFromConfirmed(
+  slamId: string,
+  exceptId?: string
+): Promise<Registration | null> {
+  let query = supabase
+    .from('registrations')
+    .select('*')
+    .eq('slam_id', slamId)
+    .eq('status', 'confirmed')
+    .order('position', { ascending: false })
+    .limit(1)
+
+  if (exceptId) query = query.neq('id', exceptId)
+
+  const { data: last } = await query.single()
+  if (!last) return null
+
+  const { data: updated } = await supabase
+    .from('registrations')
+    .update({ status: 'waiting', position: 0 })
+    .eq('id', last.id)
+    .select()
+    .single()
+
+  // Nowo zdegradowany trafia na początek rezerwowej: przesuń resztę w dół,
+  // a reorder ustawi ciągłe pozycje (1-based).
+  await reorderConfirmedList(slamId)
   await reorderWaitingList(slamId)
 
   return updated

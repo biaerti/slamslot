@@ -5,14 +5,24 @@ import { useState } from 'react'
 interface MoveDialogProps {
   participantName: string
   direction: 'to_confirmed' | 'to_waiting'
-  onConfirm: (notify: boolean) => void
+  onConfirm: (opts: { notify: boolean; backfill: boolean }) => void
   onCancel: () => void
   personalMode?: boolean
   firstWaitingName?: string
+  lastConfirmedName?: string
 }
 
-export function MoveDialog({ participantName, direction, onConfirm, onCancel, personalMode, firstWaitingName }: MoveDialogProps) {
+export function MoveDialog({
+  participantName,
+  direction,
+  onConfirm,
+  onCancel,
+  personalMode,
+  firstWaitingName,
+  lastConfirmedName,
+}: MoveDialogProps) {
   const [notify, setNotify] = useState(true)
+  const [backfill, setBackfill] = useState(true)
 
   const isToConfirmed = direction === 'to_confirmed'
   const title = isToConfirmed
@@ -22,9 +32,13 @@ export function MoveDialog({ participantName, direction, onConfirm, onCancel, pe
     ? `${participantName} zostanie przeniesiony/a z listy rezerwowej na główną.`
     : `${participantName} zostanie przeniesiony/a z listy głównej na rezerwową.`
   const confirmLabel = isToConfirmed ? 'Przenieś na główną' : 'Przenieś na rezerwową'
-  const confirmClass = isToConfirmed
-    ? 'flex-1 bg-[#c0392b] hover:bg-[#a93226] text-white text-sm font-bold py-2 transition-colors'
-    : 'flex-1 bg-[#c0392b] hover:bg-[#a93226] text-white text-xs font-bold py-2 transition-colors'
+
+  // Opis efektu checkboxa "dopełnij drugą listę"
+  const backfillLabel = isToConfirmed
+    ? 'Zepchnij ostatnią osobę z głównej na rezerwową'
+    : 'Awansuj pierwszą osobę z rezerwowej na zwolnione miejsce'
+  const backfillTargetName = isToConfirmed ? lastConfirmedName : firstWaitingName
+  const backfillAvailable = Boolean(backfillTargetName)
 
   return (
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 px-4">
@@ -32,8 +46,25 @@ export function MoveDialog({ participantName, direction, onConfirm, onCancel, pe
         <p className="font-bold text-white text-base mb-1">{title}</p>
         <p className="text-[#888] text-sm mb-4">{description}</p>
 
+        {backfillAvailable && (
+          <label className="flex items-start gap-3 cursor-pointer mb-4 group">
+            <input
+              type="checkbox"
+              checked={backfill}
+              onChange={(e) => setBackfill(e.target.checked)}
+              className="w-4 h-4 mt-0.5 accent-[#c0392b] shrink-0"
+            />
+            <span className="text-sm text-[#aaa] group-hover:text-white transition-colors">
+              {backfillLabel}
+              {backfillTargetName && (
+                <span className="text-[#666]"> ({backfillTargetName})</span>
+              )}
+            </span>
+          </label>
+        )}
+
         {!personalMode && (
-          <label className="flex items-center gap-3 cursor-pointer mb-4 group">
+          <label className="flex items-center gap-3 cursor-pointer mb-6 group">
             <input
               type="checkbox"
               checked={notify}
@@ -46,20 +77,12 @@ export function MoveDialog({ participantName, direction, onConfirm, onCancel, pe
           </label>
         )}
 
-        {!isToConfirmed && firstWaitingName && !personalMode && (
-          <p className="text-[#555] text-xs mb-6">
-            Uwaga: <span className="text-[#777]">{firstWaitingName}</span> (pierwsza osoba z listy rezerwowej) automatycznie wejdzie na to miejsce i dostanie maila. Możesz zmienić kolejność przeciągając karty.
-          </p>
-        )}
-
-        {(isToConfirmed || !firstWaitingName || personalMode) && (
-          <div className="mb-6" />
-        )}
+        {personalMode && <div className="mb-6" />}
 
         <div className="flex gap-2">
           <button
-            onClick={() => onConfirm(notify)}
-            className={confirmClass}
+            onClick={() => onConfirm({ notify, backfill: backfillAvailable && backfill })}
+            className="flex-1 bg-[#c0392b] hover:bg-[#a93226] text-white text-sm font-bold py-2 transition-colors"
           >
             {confirmLabel}
           </button>

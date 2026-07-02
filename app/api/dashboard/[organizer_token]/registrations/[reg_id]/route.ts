@@ -5,6 +5,7 @@ import {
   moveToWaiting,
   deleteRegistration,
   promoteFirstFromWaitlist,
+  demoteLastFromConfirmed,
 } from '@/lib/registrations'
 import {
   sendPromotedEmail,
@@ -32,6 +33,8 @@ export async function PATCH(
     const body = await req.json()
     const action = body.action as 'move_to_confirmed' | 'move_to_waiting'
     const notify = body.notify !== false // domyślnie true
+    // Czy dopełnić drugą listę, by utrzymać limit miejsc. Domyślnie true.
+    const backfill = body.backfill !== false
 
     if (action === 'move_to_confirmed') {
       const updated = await moveToConfirmed(slam.id, reg_id)
@@ -45,6 +48,22 @@ export async function PATCH(
           cancelToken: updated.cancel_token,
           organizerMessage: slam.organizer_message,
         })
+      }
+      // Opcjonalnie: zepchnij ostatnią osobę z głównej na rezerwową,
+      // żeby utrzymać limit (nie licząc świeżo awansowanej).
+      if (backfill) {
+        const demoted = await demoteLastFromConfirmed(slam.id, reg_id)
+        if (demoted && notify && slam.contact_mode !== 'personal') {
+          await sendMovedToWaitingEmail({
+            to: demoted.email,
+            participantName: demoted.name,
+            slamName: slam.name,
+            slamDate: slam.event_date,
+            position: demoted.position,
+            waitlistToken: demoted.waitlist_check_token,
+            organizerMessage: slam.organizer_message,
+          })
+        }
       }
       return Response.json({ updated: true })
     }
@@ -62,9 +81,21 @@ export async function PATCH(
           organizerMessage: slam.organizer_message,
         })
       }
-      // Ręczne przeniesienie na rezerwową NIE awansuje automatycznie
-      // nikogo z listy rezerwowej - lista główna po prostu się zmniejsza,
-      // a organizator sam decyduje kogo (i czy) awansować.
+      // Opcjonalnie: awansuj pierwszą osobę z rezerwowej na zwolnione miejsce.
+      if (backfill) {
+        const promoted = await promoteFirstFromWaitlist(slam.id)
+        if (promoted && notify && slam.contact_mode !== 'personal') {
+          await sendPromotedEmail({
+            to: promoted.email,
+            participantName: promoted.name,
+            slamName: slam.name,
+            slamDate: slam.event_date,
+            position: promoted.position,
+            cancelToken: promoted.cancel_token,
+            organizerMessage: slam.organizer_message,
+          })
+        }
+      }
       return Response.json({ updated: true })
     }
 
