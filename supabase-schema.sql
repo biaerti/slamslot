@@ -118,10 +118,15 @@ $$;
 -- ON CONFLICT DO NOTHING;
 
 -- ============================================================
--- Row Level Security (wyłączone — dostęp tylko przez service role)
+-- Row Level Security — WŁĄCZONE, bez polityk = brak dostępu dla anon/authenticated.
+-- Aplikacja używa service role (omija RLS), więc działa normalnie.
+-- Szczegóły i weryfikacja: supabase-rls-fix.sql
 -- ============================================================
-ALTER TABLE slams DISABLE ROW LEVEL SECURITY;
-ALTER TABLE registrations DISABLE ROW LEVEL SECURITY;
+ALTER TABLE slams ENABLE ROW LEVEL SECURITY;
+ALTER TABLE registrations ENABLE ROW LEVEL SECURITY;
+REVOKE ALL ON slams FROM anon, authenticated;
+REVOKE ALL ON registrations FROM anon, authenticated;
+REVOKE EXECUTE ON FUNCTION register_participant(uuid, text, text, text, text, text, text) FROM PUBLIC, anon, authenticated;
 
 -- ============================================================
 -- Migracja dla istniejących tabel (jeśli już masz dane)

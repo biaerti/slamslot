@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { requireDashboard } from '@/lib/dashboard-auth'
 import {
   moveToConfirmed,
   moveToWaiting,
@@ -12,23 +12,15 @@ import {
   sendMovedToWaitingEmail,
 } from '@/lib/email'
 
-async function getSlamByToken(token: string) {
-  const { data } = await supabase
-    .from('slams')
-    .select('*')
-    .eq('organizer_token', token)
-    .single()
-  return data
-}
-
 export async function PATCH(
   req: NextRequest,
   { params }: { params: Promise<{ organizer_token: string; reg_id: string }> }
 ) {
   try {
     const { organizer_token, reg_id } = await params
-    const slam = await getSlamByToken(organizer_token)
-    if (!slam) return Response.json({ error: 'Nie znaleziono slamu' }, { status: 404 })
+    const auth = await requireDashboard(organizer_token)
+    if (!auth.ok) return auth.response
+    const slam = auth.slam
 
     const body = await req.json()
     const action = body.action as 'move_to_confirmed' | 'move_to_waiting'
@@ -112,8 +104,9 @@ export async function DELETE(
 ) {
   try {
     const { organizer_token, reg_id } = await params
-    const slam = await getSlamByToken(organizer_token)
-    if (!slam) return Response.json({ error: 'Nie znaleziono slamu' }, { status: 404 })
+    const auth = await requireDashboard(organizer_token)
+    if (!auth.ok) return auth.response
+    const slam = auth.slam
 
     const { wasConfirmed } = await deleteRegistration(slam.id, reg_id)
 

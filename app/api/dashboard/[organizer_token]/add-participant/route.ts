@@ -1,15 +1,6 @@
 import { NextRequest } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { requireDashboard } from '@/lib/dashboard-auth'
 import { registerParticipant } from '@/lib/registrations'
-
-async function getSlamByToken(token: string) {
-  const { data } = await supabase
-    .from('slams')
-    .select('id')
-    .eq('organizer_token', token)
-    .single()
-  return data
-}
 
 export async function POST(
   req: NextRequest,
@@ -17,8 +8,9 @@ export async function POST(
 ) {
   try {
     const { organizer_token } = await params
-    const slam = await getSlamByToken(organizer_token)
-    if (!slam) return Response.json({ error: 'Nie znaleziono slamu' }, { status: 404 })
+    const auth = await requireDashboard(organizer_token)
+    if (!auth.ok) return auth.response
+    const slam = auth.slam
 
     const body = await req.json()
     const name = (body.name ?? '').trim()

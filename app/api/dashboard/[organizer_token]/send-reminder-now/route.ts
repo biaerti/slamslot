@@ -1,5 +1,6 @@
 import { NextRequest } from 'next/server'
 import { supabase } from '@/lib/supabase'
+import { requireDashboard } from '@/lib/dashboard-auth'
 import { sendReminderEmail } from '@/lib/email'
 
 export async function POST(
@@ -8,13 +9,9 @@ export async function POST(
 ) {
   const { organizer_token } = await params
 
-  const { data: slam } = await supabase
-    .from('slams')
-    .select('id, name, event_date, organizer_email, organizer_message, reminder_message, reminder_skip_organizer_message, reminder_sent_at')
-    .eq('organizer_token', organizer_token)
-    .single()
-
-  if (!slam) return Response.json({ error: 'Nie znaleziono slamu' }, { status: 404 })
+  const auth = await requireDashboard(organizer_token)
+  if (!auth.ok) return auth.response
+  const slam = auth.slam
 
   if (slam.reminder_sent_at) {
     return Response.json({ error: 'already_sent', sent_at: slam.reminder_sent_at }, { status: 409 })

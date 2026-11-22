@@ -3,8 +3,13 @@ import { supabase } from '@/lib/supabase'
 import { generateToken, hashPassword } from '@/lib/tokens'
 import { createSlamSchema } from '@/lib/validations'
 import { sendOrganizerEmail } from '@/lib/email'
+import { rateLimit } from '@/lib/rate-limit'
+import { setDashboardSession, type SlamRow } from '@/lib/dashboard-auth'
 
 export async function POST(req: NextRequest) {
+  const limited = rateLimit(req, 'create-slam', 5, 60 * 60 * 1000)
+  if (limited) return limited
+
   try {
     const body = await req.json()
     const parsed = createSlamSchema.safeParse(body)
@@ -40,6 +45,9 @@ export async function POST(req: NextRequest) {
       .single()
 
     if (error) throw error
+
+    // Twórca slamu z hasłem od razu dostaje sesję dashboardu
+    if (slam.dashboard_password_hash) await setDashboardSession(slam as SlamRow)
 
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000'
     const public_url = `${baseUrl}/slam/${slam.id}`

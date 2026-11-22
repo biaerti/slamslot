@@ -3,7 +3,9 @@ import { supabase } from '@/lib/supabase'
 
 export async function GET(req: NextRequest) {
   const authHeader = req.headers.get('authorization')
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+  const secret = process.env.CRON_SECRET
+  // Bez ustawionego sekretu NIE wpuszczamy nikogo (inaczej 'Bearer undefined' by przeszlo)
+  if (!secret || authHeader !== `Bearer ${secret}`) {
     return Response.json({ error: 'Unauthorized' }, { status: 401 })
   }
 

@@ -3,13 +3,17 @@ import { supabase } from '@/lib/supabase'
 import { generateToken } from '@/lib/tokens'
 import { Resend } from 'resend'
 import ResetPasswordEmail from '@/components/emails/reset-password-email'
+import { rateLimit } from '@/lib/rate-limit'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
 export async function POST(req: NextRequest) {
+  const limited = rateLimit(req, 'reset-password', 3, 60 * 60 * 1000)
+  if (limited) return limited
+
   const { organizer_token } = await req.json()
 
-  if (!organizer_token) {
+  if (typeof organizer_token !== 'string' || !organizer_token) {
     return Response.json({ error: 'Brak tokenu' }, { status: 400 })
   }
 

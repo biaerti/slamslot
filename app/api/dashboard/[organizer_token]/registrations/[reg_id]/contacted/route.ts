@@ -1,14 +1,6 @@
 import { NextRequest } from 'next/server'
 import { supabase } from '@/lib/supabase'
-
-async function getSlamByToken(token: string) {
-  const { data } = await supabase
-    .from('slams')
-    .select('id')
-    .eq('organizer_token', token)
-    .single()
-  return data
-}
+import { requireDashboard } from '@/lib/dashboard-auth'
 
 export async function PATCH(
   req: NextRequest,
@@ -16,8 +8,9 @@ export async function PATCH(
 ) {
   try {
     const { organizer_token, reg_id } = await params
-    const slam = await getSlamByToken(organizer_token)
-    if (!slam) return Response.json({ error: 'Nie znaleziono slamu' }, { status: 404 })
+    const auth = await requireDashboard(organizer_token)
+    if (!auth.ok) return auth.response
+    const slam = auth.slam
 
     const body = await req.json()
     const contacted = Boolean(body.contacted)

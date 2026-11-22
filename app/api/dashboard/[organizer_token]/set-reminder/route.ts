@@ -1,5 +1,6 @@
 import { NextRequest } from 'next/server'
 import { supabase } from '@/lib/supabase'
+import { requireDashboard } from '@/lib/dashboard-auth'
 
 export async function POST(
   req: NextRequest,
@@ -15,13 +16,9 @@ export async function POST(
       return Response.json({ error: 'Nieprawidłowa wartość' }, { status: 400 })
     }
 
-    const { data: slam } = await supabase
-      .from('slams')
-      .select('id')
-      .eq('organizer_token', organizer_token)
-      .single()
-
-    if (!slam) return Response.json({ error: 'Nie znaleziono slamu' }, { status: 404 })
+    const auth = await requireDashboard(organizer_token)
+    if (!auth.ok) return auth.response
+    const slam = auth.slam
 
     const { skip_organizer_message } = body
 

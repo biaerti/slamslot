@@ -11,7 +11,7 @@ export interface Slam {
   location: string | null
   show_spots: boolean
   organizer_email: string | null
-  dashboard_password_hash: string | null
+  has_password?: boolean // wyliczane na serwerze, hash nigdy nie trafia do klienta
   organizer_message: string | null
   reminder_days_before: number | null
   reminder_message: string | null

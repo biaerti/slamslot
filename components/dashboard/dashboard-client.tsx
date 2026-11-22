@@ -6,7 +6,6 @@ import { toast } from 'sonner'
 import { format } from 'date-fns'
 import { pl } from 'date-fns/locale'
 import type { DashboardData } from '@/types'
-import { DashboardPasswordGate } from './dashboard-password-gate'
 import EmailPreviewModal from './email-preview-modal'
 import EditSlamModal from './edit-slam-section'
 import ReminderModal from './reminder-modal'
@@ -22,7 +21,6 @@ interface DashboardClientProps {
 }
 
 export default function DashboardClient({ data: initialData, organizerToken }: DashboardClientProps) {
-  const [unlocked, setUnlocked] = useState(!initialData.slam.dashboard_password_hash)
   const [data, setData] = useState(initialData)
   const [message, setMessage] = useState(initialData.slam.organizer_message ?? '')
   const [messageSaving, setMessageSaving] = useState(false)
@@ -63,6 +61,10 @@ export default function DashboardClient({ data: initialData, organizerToken }: D
 
   const refresh = useCallback(async () => {
     const res = await fetch(`/api/dashboard/${organizerToken}`)
+    if (res.status === 401) {
+      window.location.reload() // sesja wygasła lub hasło zmienione - pokaż bramkę
+      return
+    }
     if (res.ok) {
       const fresh = await res.json()
       setData(fresh)
@@ -83,10 +85,6 @@ export default function DashboardClient({ data: initialData, organizerToken }: D
     } finally {
       setMessageSaving(false)
     }
-  }
-
-  if (!unlocked) {
-    return <DashboardPasswordGate organizerToken={organizerToken} onSuccess={() => setUnlocked(true)} />
   }
 
   const copyPublicLink = async () => {
@@ -117,7 +115,7 @@ export default function DashboardClient({ data: initialData, organizerToken }: D
             onClick={() => setShowSetPassword(true)}
             className="text-[#555] hover:text-[#aaa] text-sm transition-colors"
           >
-            {data.slam.dashboard_password_hash ? 'Zmień hasło' : 'Ustaw hasło'}
+            {data.slam.has_password ? 'Zmień hasło' : 'Ustaw hasło'}
           </button>
           <button
             onClick={refresh}
@@ -215,9 +213,9 @@ export default function DashboardClient({ data: initialData, organizerToken }: D
       {showSetPassword && (
         <SetPasswordModal
           organizerToken={organizerToken}
-          hasPassword={!!data.slam.dashboard_password_hash}
-          onSaved={() => setData((d) => ({ ...d, slam: { ...d.slam, dashboard_password_hash: 'set' } }))}
-          onRemoved={() => setData((d) => ({ ...d, slam: { ...d.slam, dashboard_password_hash: null } }))}
+          hasPassword={!!data.slam.has_password}
+          onSaved={() => setData((d) => ({ ...d, slam: { ...d.slam, has_password: true } }))}
+          onRemoved={() => setData((d) => ({ ...d, slam: { ...d.slam, has_password: false } }))}
           onClose={() => setShowSetPassword(false)}
         />
       )}

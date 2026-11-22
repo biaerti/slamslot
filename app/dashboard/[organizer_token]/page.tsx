@@ -1,20 +1,28 @@
 import { notFound } from 'next/navigation'
 import DashboardClient from '@/components/dashboard/dashboard-client'
-import type { DashboardData } from '@/types'
+import { DashboardLocked } from '@/components/dashboard/dashboard-locked'
+import { getSlamRowByToken, hasDashboardSession } from '@/lib/dashboard-auth'
+import { getRegistrationsForDashboard } from '@/lib/registrations'
+
+export const dynamic = 'force-dynamic'
+
+export const metadata = {
+  robots: { index: false, follow: false },
+}
 
 export default async function DashboardPage(
   props: { params: Promise<{ organizer_token: string }> }
 ) {
   const { organizer_token } = await props.params
 
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000'
-  const res = await fetch(`${baseUrl}/api/dashboard/${organizer_token}`, {
-    cache: 'no-store',
-  })
+  const slam = await getSlamRowByToken(organizer_token)
+  if (!slam) notFound()
 
-  if (!res.ok) notFound()
+  // Bez ważnej sesji (gdy jest hasło) do HTML-a nie trafiają ŻADNE dane uczestników
+  if (!(await hasDashboardSession(slam))) {
+    return <DashboardLocked organizerToken={organizer_token} />
+  }
 
-  const data: DashboardData = await res.json()
-
+  const data = await getRegistrationsForDashboard(slam)
   return <DashboardClient data={data} organizerToken={organizer_token} />
 }

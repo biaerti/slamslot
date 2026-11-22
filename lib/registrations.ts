@@ -1,17 +1,13 @@
 import { supabase } from './supabase'
 import { generateToken } from './tokens'
 import type { Registration, Slam } from '@/types'
+import { toSafeSlam, type SlamRow } from './dashboard-auth'
 
+// Przyjmuje juz zautoryzowany slam (patrz lib/dashboard-auth.ts) i zwraca dane bezpieczne dla klienta
 export async function getRegistrationsForDashboard(
-  organizerToken: string
-): Promise<{ slam: Slam; confirmed: Registration[]; waiting: Registration[]; cancelled: Registration[] } | null> {
-  const { data: slam, error: slamError } = await supabase
-    .from('slams')
-    .select('*')
-    .eq('organizer_token', organizerToken)
-    .single()
-
-  if (slamError || !slam) return null
+  slamRow: SlamRow
+): Promise<{ slam: Slam; confirmed: Registration[]; waiting: Registration[]; cancelled: Registration[] }> {
+  const slam = toSafeSlam(slamRow)
 
   const { data: registrations } = await supabase
     .from('registrations')

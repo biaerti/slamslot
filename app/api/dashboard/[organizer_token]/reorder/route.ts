@@ -1,5 +1,6 @@
 import { NextRequest } from 'next/server'
 import { supabase } from '@/lib/supabase'
+import { requireDashboard } from '@/lib/dashboard-auth'
 
 export async function POST(
   req: NextRequest,
@@ -8,13 +9,9 @@ export async function POST(
   try {
     const { organizer_token } = await params
 
-    const { data: slam } = await supabase
-      .from('slams')
-      .select('id')
-      .eq('organizer_token', organizer_token)
-      .single()
-
-    if (!slam) return Response.json({ error: 'Nie znaleziono slamu' }, { status: 404 })
+    const auth = await requireDashboard(organizer_token)
+    if (!auth.ok) return auth.response
+    const slam = auth.slam
 
     // ordered_ids: tablica ID w nowej kolejności dla danego statusu
     const { ordered_ids, status } = await req.json() as {

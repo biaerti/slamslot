@@ -3,11 +3,15 @@ import { registerSchema } from '@/lib/validations'
 import { registerParticipant } from '@/lib/registrations'
 import { sendConfirmedEmail, sendWaitlistEmail } from '@/lib/email'
 import { supabase } from '@/lib/supabase'
+import { rateLimit } from '@/lib/rate-limit'
 
 export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const limited = rateLimit(req, 'register', 10, 60 * 60 * 1000)
+  if (limited) return limited
+
   try {
     const { id } = await params
     const body = await req.json()
