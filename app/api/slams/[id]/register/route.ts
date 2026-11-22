@@ -9,7 +9,7 @@ export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const limited = rateLimit(req, 'register', 10, 60 * 60 * 1000)
+  const limited = rateLimit(req, 'register', 30, 10 * 60 * 1000)
   if (limited) return limited
 
   try {

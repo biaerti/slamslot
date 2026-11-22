@@ -21,7 +21,7 @@ function detectImage(buf: Buffer): { ext: string; type: string } | null {
 }
 
 export async function POST(req: NextRequest) {
-  const limited = rateLimit(req, 'upload', 10, 60 * 60 * 1000)
+  const limited = rateLimit(req, 'upload', 30, 60 * 60 * 1000)
   if (limited) return limited
 
   try {
